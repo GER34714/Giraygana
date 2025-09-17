@@ -186,6 +186,7 @@
     }
 
     function showPopup(premio, cajero) {
+      localStorage.setItem("premioGanado", premio);
       premioTexto.innerText = `FELICIDADES 🎉 Te ganaste: ${premio}`;
       cajeroTexto.innerText = `Cajero asignado: ${cajero}`;
       popup.style.display = "flex";
@@ -244,9 +245,10 @@
 
     solicitarPremio.addEventListener("click", () => {
       const cajero = localStorage.getItem("assignedCajero");
-      if(cajero) {
-        // Redirigir al rotador, reemplaza este link por el tuyo
-        window.open(`https://tu-rotador.com?cajero=${encodeURIComponent(cajero)}`, "_blank");
+      const premio = localStorage.getItem("premioGanado");
+      if(cajero && premio) {
+        // Redirigir al rotador con cajero y premio
+        window.open(`https://linkdelasuerte.onrender.com?cajero=${encodeURIComponent(cajero)}&premio=${encodeURIComponent(premio)}`, "_blank");
       }
     });
   </script>
