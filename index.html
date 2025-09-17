@@ -34,7 +34,6 @@
       width: 100%;
       height: auto;
     }
-    /* Indicador flecha */
     .indicator {
       position: absolute;
       top: -10px;
@@ -47,7 +46,6 @@
       border-bottom: 25px solid yellow;
       filter: drop-shadow(0 0 5px #ff0);
     }
-    /* Botón Girar */
     #spinButton {
       margin-top: 20px;
       background: #ff0000;
@@ -70,7 +68,6 @@
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
       to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
-    /* Popup */
     #popup {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -102,17 +99,6 @@
       margin: 10px 0;
       font-size: 1.2rem;
     }
-    #solicitarBtn {
-      margin-top: 15px;
-      background: linear-gradient(45deg, #00ccff, #0066ff);
-      color: #fff;
-      font-size: 1.2rem;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 15px #00ccff;
-    }
     #closePopup {
       margin-top: 15px;
       background: #ff3333;
@@ -130,24 +116,19 @@
     <img src="https://iili.io/KRwFVG2.md.jpg" alt="Banner Casino">
   </header>
 
-  <!-- Texto llamativo -->
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
-  <!-- Ruleta con indicador -->
   <div class="wheel-container">
     <div class="indicator"></div>
     <canvas id="wheelCanvas" width="300" height="300"></canvas>
   </div>
   <button id="spinButton">GIRAR</button>
 
-  <!-- Popup -->
   <div id="popup">
     <div id="popupContent">
       <h2>¡GANASTE! 🎉</h2>
       <p id="premioTexto"></p>
-      <p id="extraTexto"></p>
-      <button id="solicitarBtn">Solicitar premio</button>
-      <br>
+      <p id="cajeroTexto"></p>
       <button id="closePopup">Cerrar</button>
     </div>
   </div>
@@ -163,31 +144,20 @@
       "300 fichas (sin carga, no retirables)"
     ];
 
-    const cajeros = [
-      { nombre: "Joaki", numero: "1123365501" },
-      { nombre: "Facu", numero: "1125127839" }
-    ];
-
-    let currentCajeroIndex = localStorage.getItem("cajeroIndex") || 0;
-    let assignedCajero = localStorage.getItem("assignedCajero") || null;
-    let lastSpinTime = localStorage.getItem("lastSpinTime");
-
     const canvas = document.getElementById("wheelCanvas");
     const ctx = canvas.getContext("2d");
     const spinButton = document.getElementById("spinButton");
     const popup = document.getElementById("popup");
     const premioTexto = document.getElementById("premioTexto");
-    const extraTexto = document.getElementById("extraTexto");
-    const solicitarBtn = document.getElementById("solicitarBtn");
+    const cajeroTexto = document.getElementById("cajeroTexto");
     const closePopup = document.getElementById("closePopup");
 
-    const numSegments = premios.length;
-    const anglePerSegment = (2 * Math.PI) / numSegments;
     let currentAngle = 0;
 
-    // Dibujar ruleta
     function drawWheel() {
       const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
+      const numSegments = premios.length;
+      const anglePerSegment = (2 * Math.PI) / numSegments;
       for (let i = 0; i < numSegments; i++) {
         ctx.beginPath();
         ctx.moveTo(150,150);
@@ -199,41 +169,48 @@
     }
     drawWheel();
 
-    function getRemainingTime() {
-      if (!lastSpinTime) return 0;
-      const diff = Date.now() - parseInt(lastSpinTime);
-      return 24*60*60*1000 - diff;
+    function drawRotatedWheel(angle) {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.save();
+      ctx.translate(150,150);
+      ctx.rotate(angle * Math.PI / 180);
+      ctx.translate(-150,-150);
+      drawWheel();
+      ctx.restore();
     }
 
-    function showPopup(premio, cajero, countdownText = null) {
-      premioTexto.innerText = countdownText ? countdownText : `FELICIDADES 🎉 Te ganaste: ${premio}`;
-      extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function showPopup(premio, cajero) {
+      premioTexto.innerText = `FELICIDADES 🎉 Te ganaste: ${premio}`;
+      cajeroTexto.innerText = `Cajero asignado: ${cajero}`;
       popup.style.display = "flex";
-      solicitarBtn.style.display = countdownText ? "none" : "inline-block";
-
-      if (!countdownText) {
-        solicitarBtn.onclick = () => {
-          const fecha = new Date().toLocaleString();
-          const mensaje = `Hola, ${cajero.nombre}. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
-          const url = `https://wa.me/54${cajero.numero}?text=${encodeURIComponent(mensaje)}`;
-          window.open(url, "_blank");
-        };
-      }
     }
 
-    // Animación de giro real
-    function spinWheel() {
-      let remaining = getRemainingTime();
-      if (remaining > 0) {
-        const horas = Math.floor(remaining / (1000*60*60));
-        const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
-        showPopup(null, null, `⏳ Podrás volver a girar en ${horas}h ${mins}m`);
-        return;
-      }
-
+    spinButton.addEventListener("click", () => {
       spinButton.disabled = true;
-      const spinTime = 4000; // 4 segundos
-      const spinAngle = Math.random() * 360 + 1800; // entre 1800 y 2160 grados
+
+      // Obtener cajero del servidor si el cliente no tiene asignado
+      let assignedCajero = localStorage.getItem("assignedCajero");
+      if (!assignedCajero) {
+        fetch('/numero')
+          .then(res => res.json())
+          .then(data => {
+            assignedCajero = data.numero;
+            localStorage.setItem("assignedCajero", assignedCajero);
+            spinAnimation(assignedCajero);
+          });
+      } else {
+        spinAnimation(assignedCajero);
+      }
+    });
+
+    function spinAnimation(cajero) {
+      const premio = premios[Math.floor(Math.random() * premios.length)];
+      const spinTime = 4000;
+      const spinAngle = Math.random() * 360 + 1800;
       const startAngle = currentAngle;
       const targetAngle = startAngle + spinAngle;
       const startTime = performance.now();
@@ -248,22 +225,6 @@
         } else {
           currentAngle = targetAngle;
           drawRotatedWheel(currentAngle);
-
-          // Calcular premio
-          const degrees = (currentAngle * 180 / Math.PI) % 360;
-          const index = Math.floor((numSegments - (degrees / (360/numSegments))) % numSegments);
-          const premio = premios[index];
-
-          if (!assignedCajero) {
-            assignedCajero = currentCajeroIndex % cajeros.length;
-            localStorage.setItem("assignedCajero", assignedCajero);
-            currentCajeroIndex++;
-            localStorage.setItem("cajeroIndex", currentCajeroIndex);
-          }
-          const cajero = cajeros[assignedCajero];
-          lastSpinTime = Date.now();
-          localStorage.setItem("lastSpinTime", lastSpinTime);
-
           showPopup(premio, cajero);
           spinButton.disabled = false;
         }
@@ -271,22 +232,9 @@
       requestAnimationFrame(animate);
     }
 
-    function easeOut(t) {
-      return 1 - Math.pow(1 - t, 3);
-    }
-
-    function drawRotatedWheel(angle) {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.save();
-      ctx.translate(150,150);
-      ctx.rotate(angle * Math.PI / 180);
-      ctx.translate(-150,-150);
-      drawWheel();
-      ctx.restore();
-    }
-
-    spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => { popup.style.display = "none"; });
+    closePopup.addEventListener("click", () => {
+      popup.style.display = "none";
+    });
   </script>
 </body>
 </html>
