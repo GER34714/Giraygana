@@ -1,256 +1,167 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ruleta de Premios</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    header img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    h1 {
-      font-size: 1.8rem;
-      margin: 20px 0;
-      color: #ffcc00;
-      text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-    }
-    .wheel-container {
-      position: relative;
-      width: 320px;
-      margin: 0 auto;
-    }
-    #wheelCanvas {
-      width: 100%;
-      height: auto;
-    }
-    .indicator {
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%) rotate(180deg); /* girada 180° */
-      width: 0;
-      height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 25px solid yellow;
-      filter: drop-shadow(0 0 5px #ff0);
-    }
-    #spinButton {
-      margin-top: 20px;
-      background: #ff0000;
-      color: #fff;
-      font-size: 1.5rem;
-      padding: 15px 40px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
-      animation: neonPulse 1.5s infinite alternate;
-    }
-    #spinButton:disabled {
-      background: gray;
-      cursor: not-allowed;
-      box-shadow: none;
-      animation: none;
-    }
-    @keyframes neonPulse {
-      from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
-    }
-    #popup {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    #popupContent {
-      background: #222;
-      padding: 20px;
-      border-radius: 15px;
-      text-align: center;
-      max-width: 90%;
-      box-shadow: 0 0 20px #ffcc00;
-      animation: popupIn 0.5s ease;
-    }
-    @keyframes popupIn {
-      from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    #popupContent h2 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      color: #00ff99;
-    }
-    #popupContent p {
-      margin: 10px 0;
-      font-size: 1.2rem;
-    }
-    #closePopup, #solicitarPremio {
-      margin-top: 10px;
-      background: #ff3333;
-      color: #fff;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-right: 5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruleta de Premios</title>
+<style>
+  body {margin:0;padding:0;font-family:Arial,sans-serif;background:#111;color:#fff;text-align:center;overflow-x:hidden;}
+  header img {width:100%;height:auto;display:block;}
+  h1 {font-size:1.8rem;margin:20px 0;color:#ffcc00;text-shadow:0 0 10px #ff00ff,0 0 20px #00ffff;}
+  .wheel-container {position:relative;width:320px;margin:0 auto;}
+  #wheelCanvas {width:100%;height:auto;}
+  .indicator {position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(180deg);
+             width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:25px solid yellow;
+             filter:drop-shadow(0 0 5px #ff0);}
+  #spinButton {margin-top:20px;background:#ff0000;color:#fff;font-size:1.5rem;padding:15px 40px;border:none;border-radius:12px;cursor:pointer;
+               box-shadow:0 0 20px #ff00ff,0 0 40px #ff00ff;animation:neonPulse 1.5s infinite alternate;}
+  #spinButton:disabled {background:gray;cursor:not-allowed;box-shadow:none;animation:none;}
+  @keyframes neonPulse {from{box-shadow:0 0 10px #ff00ff,0 0 20px #ff00ff;}to{box-shadow:0 0 20px #00ffff,0 0 40px #00ffff;}}
+  #popup {position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:9999;}
+  #popupContent {background:#222;padding:20px;border-radius:15px;text-align:center;max-width:90%;box-shadow:0 0 20px #ffcc00;animation:popupIn 0.5s ease;}
+  @keyframes popupIn {from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+  #popupContent h2 {font-size:2rem;margin-bottom:10px;color:#00ff99;}
+  #popupContent p {margin:10px 0;font-size:1.2rem;}
+  #closePopup, #solicitarPremio {margin-top:10px;background:#ff3333;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;margin-right:5px;}
+</style>
 </head>
 <body>
-  <header>
-    <img src="https://iili.io/KRwFVG2.md.jpg" alt="Banner Casino">
-  </header>
+<header>
+  <img src="https://iili.io/KRwFVG2.md.jpg" alt="Banner Casino">
+</header>
 
-  <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
+<h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
-  <div class="wheel-container">
-    <div class="indicator"></div>
-    <canvas id="wheelCanvas" width="300" height="300"></canvas>
+<div class="wheel-container">
+  <div class="indicator"></div>
+  <canvas id="wheelCanvas" width="300" height="300"></canvas>
+</div>
+<button id="spinButton">GIRAR</button>
+
+<div id="popup">
+  <div id="popupContent">
+    <h2>¡GANASTE! 🎉</h2>
+    <p id="premioTexto"></p>
+    <p id="cajeroTexto"></p>
+    <button id="solicitarPremio">Solicitar premio</button>
+    <button id="closePopup">Cerrar</button>
   </div>
-  <button id="spinButton">GIRAR</button>
+</div>
 
-  <div id="popup">
-    <div id="popupContent">
-      <h2>¡GANASTE! 🎉</h2>
-      <p id="premioTexto"></p>
-      <p id="cajeroTexto"></p>
-      <button id="solicitarPremio">Solicitar premio</button>
-      <button id="closePopup">Cerrar</button>
-    </div>
-  </div>
+<script>
+const premios = [
+  "10% extra (en mi primera carga)",
+  "15% extra (en mi primera carga)",
+  "20% extra (en mi primera carga)",
+  "30% extra (en mi segunda carga)",
+  "100 fichas (sin carga, no retirables)",
+  "500 fichas (sin carga, no retirables)",
+  "300 fichas (sin carga, no retirables)"
+];
 
-  <script>
-    const premios = [
-      "10% extra (en mi primera carga)",
-      "15% extra (en mi primera carga)",
-      "20% extra (en mi primera carga)",
-      "30% extra (en mi segunda carga)",
-      "100 fichas (sin carga, no retirables)",
-      "500 fichas (sin carga, no retirables)",
-      "300 fichas (sin carga, no retirables)"
-    ];
+const cajeros = ['5491123365501','1125127839']; // Joaki, Facu
+let idx = 0;
 
-    const canvas = document.getElementById("wheelCanvas");
-    const ctx = canvas.getContext("2d");
-    const spinButton = document.getElementById("spinButton");
-    const popup = document.getElementById("popup");
-    const premioTexto = document.getElementById("premioTexto");
-    const cajeroTexto = document.getElementById("cajeroTexto");
-    const closePopup = document.getElementById("closePopup");
-    const solicitarPremio = document.getElementById("solicitarPremio");
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+const spinButton = document.getElementById("spinButton");
+const popup = document.getElementById("popup");
+const premioTexto = document.getElementById("premioTexto");
+const cajeroTexto = document.getElementById("cajeroTexto");
+const closePopup = document.getElementById("closePopup");
+const solicitarPremio = document.getElementById("solicitarPremio");
 
-    let currentAngle = 0;
+let currentAngle = 0;
 
-    function drawWheel() {
-      const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
-      const numSegments = premios.length;
-      const anglePerSegment = (2 * Math.PI) / numSegments;
-      for (let i = 0; i < numSegments; i++) {
-        ctx.beginPath();
-        ctx.moveTo(150,150);
-        ctx.arc(150,150,150,i*anglePerSegment,(i+1)*anglePerSegment);
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.fill();
-        ctx.stroke();
-      }
-    }
-    drawWheel();
+// Dibujar ruleta
+function drawWheel() {
+  const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
+  const numSegments = premios.length;
+  const anglePerSegment = (2 * Math.PI) / numSegments;
+  for(let i=0;i<numSegments;i++){
+    ctx.beginPath();
+    ctx.moveTo(150,150);
+    ctx.arc(150,150,150,i*anglePerSegment,(i+1)*anglePerSegment);
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    ctx.stroke();
+  }
+}
+drawWheel();
 
-    function drawRotatedWheel(angle) {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.save();
-      ctx.translate(150,150);
-      ctx.rotate(angle * Math.PI / 180);
-      ctx.translate(-150,-150);
-      drawWheel();
-      ctx.restore();
-    }
+function drawRotatedWheel(angle){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();
+  ctx.translate(150,150);
+  ctx.rotate(angle * Math.PI / 180);
+  ctx.translate(-150,-150);
+  drawWheel();
+  ctx.restore();
+}
 
-    function easeOut(t) {
-      return 1 - Math.pow(1 - t, 3);
-    }
+function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
 
-    function showPopup(premio, cajero) {
-      localStorage.setItem("premioGanado", premio);
-      premioTexto.innerText = `FELICIDADES 🎉 Te ganaste: ${premio}`;
-      cajeroTexto.innerText = `Cajero asignado: ${cajero}`;
-      popup.style.display = "flex";
-      solicitarPremio.style.display = "inline-block";
-    }
+// Mostrar popup
+function showPopup(premio,cajero){
+  localStorage.setItem("premioGanado",premio);
+  premioTexto.innerText=`FELICIDADES 🎉 Te ganaste: ${premio}`;
+  cajeroTexto.innerText=`Cajero asignado: ${cajero}`;
+  popup.style.display="flex";
+  solicitarPremio.style.display="inline-block";
+}
 
-    spinButton.addEventListener("click", () => {
-      spinButton.disabled = true;
+// Obtener cajero rotativo (simula la lógica de tu rotador Node.js)
+function getCajero(){
+  let stored = localStorage.getItem("assignedCajero");
+  if(stored) return stored;
+  const cajero = cajeros[idx];
+  idx = (idx+1) % cajeros.length;
+  localStorage.setItem("assignedCajero",cajero);
+  return cajero;
+}
 
-      let assignedCajero = localStorage.getItem("assignedCajero");
-      if (!assignedCajero) {
-        fetch('/numero')
-          .then(res => res.json())
-          .then(data => {
-            assignedCajero = data.numero; // número del servidor
-            localStorage.setItem("assignedCajero", assignedCajero);
-            spinAnimation(assignedCajero);
-          })
-          .catch(err => {
-            alert("Error al conectar con el rotador.");
-            spinButton.disabled = false;
-          });
-      } else {
-        spinAnimation(assignedCajero);
-      }
-    });
+// Animación de ruleta
+function spinAnimation(cajero){
+  const premio = premios[Math.floor(Math.random()*premios.length)];
+  const spinTime = 4000;
+  const spinAngle = Math.random()*360 + 1800;
+  const startAngle = currentAngle;
+  const targetAngle = startAngle + spinAngle;
+  const startTime = performance.now();
 
-    function spinAnimation(cajero) {
-      const premio = premios[Math.floor(Math.random() * premios.length)];
-      const spinTime = 4000;
-      const spinAngle = Math.random() * 360 + 1800;
-      const startAngle = currentAngle;
-      const targetAngle = startAngle + spinAngle;
-      const startTime = performance.now();
-
-      function animate(time) {
-        let elapsed = time - startTime;
-        if (elapsed < spinTime) {
-          const progress = elapsed / spinTime;
-          currentAngle = startAngle + (spinAngle * easeOut(progress));
-          drawRotatedWheel(currentAngle);
-          requestAnimationFrame(animate);
-        } else {
-          currentAngle = targetAngle;
-          drawRotatedWheel(currentAngle);
-          showPopup(premio, cajero);
-          spinButton.disabled = false;
-        }
-      }
+  function animate(time){
+    let elapsed = time-startTime;
+    if(elapsed<spinTime){
+      const progress = elapsed/spinTime;
+      currentAngle = startAngle + (spinAngle * easeOut(progress));
+      drawRotatedWheel(currentAngle);
       requestAnimationFrame(animate);
+    }else{
+      currentAngle=targetAngle;
+      drawRotatedWheel(currentAngle);
+      showPopup(premio,cajero);
+      spinButton.disabled=false;
     }
+  }
+  requestAnimationFrame(animate);
+}
 
-    closePopup.addEventListener("click", () => {
-      popup.style.display = "none";
-    });
+spinButton.addEventListener("click",()=>{
+  spinButton.disabled=true;
+  const cajero = getCajero();
+  spinAnimation(cajero);
+});
 
-    solicitarPremio.addEventListener("click", () => {
-      const cajero = localStorage.getItem("assignedCajero");
-      const premio = localStorage.getItem("premioGanado");
-      if(cajero && premio) {
-        // Redirigir al rotador con cajero y premio
-        window.open(`https://linkdelasuerte.onrender.com?cajero=${encodeURIComponent(cajero)}&premio=${encodeURIComponent(premio)}`, "_blank");
-      }
-    });
-  </script>
+closePopup.addEventListener("click",()=>{popup.style.display="none";});
+
+solicitarPremio.addEventListener("click",()=>{
+  const cajero = localStorage.getItem("assignedCajero");
+  const premio = localStorage.getItem("premioGanado");
+  if(cajero && premio){
+    // Redirigir al rotador real con cajero y premio
+    window.open(`https://linkdelasuerte.onrender.com?cajero=${encodeURIComponent(cajero)}&premio=${encodeURIComponent(premio)}`,"_blank");
+  }
+});
+</script>
 </body>
 </html>
