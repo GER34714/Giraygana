@@ -99,14 +99,15 @@
       margin: 10px 0;
       font-size: 1.2rem;
     }
-    #closePopup {
-      margin-top: 15px;
+    #closePopup, #solicitarPremio {
+      margin-top: 10px;
       background: #ff3333;
       color: #fff;
       border: none;
       padding: 8px 15px;
       border-radius: 5px;
       cursor: pointer;
+      margin-right: 5px;
     }
   </style>
 </head>
@@ -128,6 +129,7 @@
       <h2>¡GANASTE! 🎉</h2>
       <p id="premioTexto"></p>
       <p id="cajeroTexto"></p>
+      <button id="solicitarPremio">Solicitar premio</button>
       <button id="closePopup">Cerrar</button>
     </div>
   </div>
@@ -150,6 +152,7 @@
     const premioTexto = document.getElementById("premioTexto");
     const cajeroTexto = document.getElementById("cajeroTexto");
     const closePopup = document.getElementById("closePopup");
+    const solicitarPremio = document.getElementById("solicitarPremio");
 
     let currentAngle = 0;
 
@@ -186,20 +189,24 @@
       premioTexto.innerText = `FELICIDADES 🎉 Te ganaste: ${premio}`;
       cajeroTexto.innerText = `Cajero asignado: ${cajero}`;
       popup.style.display = "flex";
+      solicitarPremio.style.display = "inline-block";
     }
 
     spinButton.addEventListener("click", () => {
       spinButton.disabled = true;
 
-      // Lógica rotador del servidor usando exactamente tu código
       let assignedCajero = localStorage.getItem("assignedCajero");
       if (!assignedCajero) {
         fetch('/numero')
           .then(res => res.json())
           .then(data => {
-            assignedCajero = data.numero; // número devuelto por el servidor
+            assignedCajero = data.numero; // número del servidor
             localStorage.setItem("assignedCajero", assignedCajero);
             spinAnimation(assignedCajero);
+          })
+          .catch(err => {
+            alert("Error al conectar con el rotador.");
+            spinButton.disabled = false;
           });
       } else {
         spinAnimation(assignedCajero);
@@ -233,6 +240,14 @@
 
     closePopup.addEventListener("click", () => {
       popup.style.display = "none";
+    });
+
+    solicitarPremio.addEventListener("click", () => {
+      const cajero = localStorage.getItem("assignedCajero");
+      if(cajero) {
+        // Redirigir al rotador, reemplaza este link por el tuyo
+        window.open(`https://tu-rotador.com?cajero=${encodeURIComponent(cajero)}`, "_blank");
+      }
     });
   </script>
 </body>
