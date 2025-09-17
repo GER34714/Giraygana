@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rueda de Premios</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+  body, html { width: 100%; height: 100%; overflow-x: hidden; background: #111; }
+
+  /* Fondo */
+  .hero {
+    width: 100%;
+    height: 50vh;
+    background: url('LINK_DE_TU_IMAGEN_DE_FONDO') no-repeat center/cover;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .hero h1 {
+    color: #FFD700;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 10px #ff00ff, -2px -2px 10px #00ffff;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .ruleta-container {
+    width: 90%;
+    max-width: 400px;
+    margin: 40px auto;
+    text-align: center;
+  }
+
+  .ruleta {
+    width: 100%;
+    border-radius: 50%;
+    border: 8px solid #FFD700;
+    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .btn-girar {
+    margin-top: 20px;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(45deg, #ff0000, #ffcc00, #00ffcc);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    animation: glow 1.5s infinite alternate;
+  }
+
+  @keyframes glow {
+    0% { box-shadow: 0 0 10px #ff0000, 0 0 20px #ffcc00, 0 0 30px #00ffcc; }
+    100% { box-shadow: 0 0 20px #ff0000, 0 0 40px #ffcc00, 0 0 60px #00ffcc; }
+  }
+
+  .popup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #3B0F5A;
+    color: #FFD700;
+    border: 3px solid #FFD700;
+    padding: 30px 20px;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 100;
+    display: none;
+    max-width: 90%;
+  }
+  .popup button {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 1.2rem;
+    color: #fff;
+    background: #C62828;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  @media(max-width: 500px){
+    .hero h1 { font-size: 1.8rem; }
+    .btn-girar { font-size: 1.2rem; padding: 12px 25px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS!</h1>
+</div>
+
+<div class="ruleta-container">
+  <canvas id="ruleta" class="ruleta"></canvas>
+  <button class="btn-girar" id="btnGirar">GIRAR</button>
+</div>
+
+<div class="popup" id="popupGanador">
+  <div id="mensajePopup"></div>
+  <button id="btnSolicitar">Solicitar premio</button>
+</div>
+
+<div class="popup" id="popupEspera">
+  <div id="mensajeEspera"></div>
+</div>
+
+<script>
+  // ----------------------
+  // Configuración ruleta
+  // ----------------------
+  const canvas = document.getElementById('ruleta');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 400;
+  canvas.height = 400;
+  const colores = ['#FF0000','#FF9900','#FFFF00','#33FF33','#00FFFF','#3399FF','#CC33FF','#FF33CC'];
+  const sectores = colores.length;
+  let girando = false;
+
+  const premios = [
+    "10% extra (en mi primera carga)",
+    "15% extra (en mi primera carga)",
+    "20% extra (en mi primera carga)",
+    "30% extra (en mi segunda carga)",
+    "100 fichas (sin carga, no retirables)",
+    "500 fichas (sin carga, no retirables)",
+    "300 fichas (sin carga, no retirables)"
+  ];
+
+  function dibujarRuleta() {
+    const radio = canvas.width/2;
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+    for(let i=0;i<sectores;i++){
+      const inicio = (i*(2*Math.PI/sectores));
+      const fin = ((i+1)*(2*Math.PI/sectores));
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radio, inicio, fin);
+      ctx.fillStyle = colores[i % colores.length];
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.stroke();
+      ctx.closePath();
+    }
+  }
+  dibujarRuleta();
+
+  // ----------------------
+  // Rotador de cajeros
+  // ----------------------
+  const cajeros = [
+    {nombre: 'Joaki', numero: '1123365501'},
+    {nombre: 'Facu', numero: '1125127839'}
+  ];
+
+  function obtenerCajero(clienteId){
+    let cajeroAsignado = localStorage.getItem('cajero_'+clienteId);
+    if(cajeroAsignado) return JSON.parse(cajeroAsignado);
+    let contador = localStorage.getItem('contadorCajero') || 0;
+    const asignado = cajeros[contador % cajeros.length];
+    localStorage.setItem('cajero_'+clienteId, JSON.stringify(asignado));
+    localStorage.setItem('contadorCajero', (parseInt(contador)+1));
+    return asignado;
+  }
+
+  // ----------------------
+  // Manejo del popup y giro
+  // ----------------------
+  const btnGirar = document.getElementById('btnGirar');
+  const popupGanador = document.getElementById('popupGanador');
+  const mensajePopup = document.getElementById('mensajePopup');
+  const btnSolicitar = document.getElementById('btnSolicitar');
+  const popupEspera = document.getElementById('popupEspera');
+  const mensajeEspera = document.getElementById('mensajeEspera');
+
+  function mostrarPopup(popup){
+    document.querySelectorAll('.popup').forEach(p=>p.style.display='none');
+    popup.style.display = 'block';
+  }
+
+  btnGirar.addEventListener('click', ()=>{
+    if(girando) return;
+
+    const clienteId = prompt('Ingresa tu número de WhatsApp para asignar cajero:');
+    if(!clienteId) return alert('Debes ingresar un número válido');
+
+    // Chequear si ya jugó en las últimas 24 hs
+    const ultimaVez = localStorage.getItem('ultimoGiro_'+clienteId);
+    if(ultimaVez){
+      const ahora = Date.now();
+      const diferencia = ahora - parseInt(ultimaVez);
+      const horasRestantes = 24 - Math.floor(diferencia/1000/60/60);
+      if(diferencia < 24*60*60*1000){
+        mensajeEspera.innerHTML = `<h2>⏳ Espera</h2><p>Ya jugaste. Te faltan ${horasRestantes} horas para volver a girar.</p>`;
+        mostrarPopup(popupEspera);
+        return;
+      }
+    }
+
+    girando = true;
+    const anguloFinal = Math.random()*360 + 720; 
+    canvas.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    canvas.style.transform = `rotate(${anguloFinal}deg)`;
+
+    setTimeout(()=>{
+      girando = false;
+      const premioGanado = premios[Math.floor(Math.random()*premios.length)];
+      mensajePopup.innerHTML = `<h2>GANASTE! 🎉🎉</h2><p>${premioGanado}</p><p>Recordá volver en 24 hs para volver a girar</p>`;
+      mostrarPopup(popupGanador);
+      localStorage.setItem('ultimoPremio_'+clienteId, premioGanado);
+      localStorage.setItem('ultimoGiro_'+clienteId, Date.now());
+    }, 5000);
+  });
+
+  btnSolicitar.addEventListener('click', ()=>{
+    const clienteId = prompt('Ingresa tu número de WhatsApp para enviar el premio:');
+    if(!clienteId) return alert('Debes ingresar un número válido');
+
+    const premio = localStorage.getItem('ultimoPremio_'+clienteId) || 'PREMIO SORPRESA';
+    const cajero = obtenerCajero(clienteId);
+
+    const mensaje = encodeURIComponent(`Hola, ${cajero.nombre}. Gané en la rueda de premios ${premio} / ${new Date().toLocaleString()}. Quisiera solicitarlo. Gracias!`);
+    const urlWhatsApp = `https://wa.me/${cajero.numero}?text=${mensaje}`;
+    window.open(urlWhatsApp,'_blank');
+  });
+
+</script>
+
+</body>
+  </html>
+  
