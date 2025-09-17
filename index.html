@@ -59,9 +59,6 @@ const premios = [
   "300 fichas (sin carga, no retirables)"
 ];
 
-const cajeros = ['5491123365501','1125127839']; // Joaki, Facu
-let idx = 0;
-
 const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
 const spinButton = document.getElementById("spinButton");
@@ -101,28 +98,38 @@ function drawRotatedWheel(angle){
 
 function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
 
-// Mostrar popup
 function showPopup(premio,cajero){
   localStorage.setItem("premioGanado",premio);
+  localStorage.setItem("assignedCajero",cajero);
   premioTexto.innerText=`FELICIDADES 🎉 Te ganaste: ${premio}`;
   cajeroTexto.innerText=`Cajero asignado: ${cajero}`;
   popup.style.display="flex";
   solicitarPremio.style.display="inline-block";
 }
 
-// Obtener cajero rotativo (simula la lógica de tu rotador Node.js)
-function getCajero(){
+// Obtener cajero del backend si no hay asignado
+async function getCajeroBackend(){
   let stored = localStorage.getItem("assignedCajero");
   if(stored) return stored;
-  const cajero = cajeros[idx];
-  idx = (idx+1) % cajeros.length;
-  localStorage.setItem("assignedCajero",cajero);
-  return cajero;
+
+  try {
+    const res = await fetch('https://linkdelasuerte.onrender.com/numero');
+    const data = await res.json();
+    const cajero = data.numero;
+    localStorage.setItem("assignedCajero",cajero);
+    return cajero;
+  } catch(err) {
+    alert("Error al conectar con el rotador");
+    spinButton.disabled = false;
+    throw err;
+  }
 }
 
-// Animación de ruleta
-function spinAnimation(cajero){
+async function spinAnimation(){
+  spinButton.disabled=true;
+  const cajero = await getCajeroBackend();
   const premio = premios[Math.floor(Math.random()*premios.length)];
+  
   const spinTime = 4000;
   const spinAngle = Math.random()*360 + 1800;
   const startAngle = currentAngle;
@@ -130,14 +137,14 @@ function spinAnimation(cajero){
   const startTime = performance.now();
 
   function animate(time){
-    let elapsed = time-startTime;
-    if(elapsed<spinTime){
+    let elapsed = time - startTime;
+    if(elapsed < spinTime){
       const progress = elapsed/spinTime;
       currentAngle = startAngle + (spinAngle * easeOut(progress));
       drawRotatedWheel(currentAngle);
       requestAnimationFrame(animate);
-    }else{
-      currentAngle=targetAngle;
+    } else {
+      currentAngle = targetAngle;
       drawRotatedWheel(currentAngle);
       showPopup(premio,cajero);
       spinButton.disabled=false;
@@ -146,11 +153,7 @@ function spinAnimation(cajero){
   requestAnimationFrame(animate);
 }
 
-spinButton.addEventListener("click",()=>{
-  spinButton.disabled=true;
-  const cajero = getCajero();
-  spinAnimation(cajero);
-});
+spinButton.addEventListener("click", spinAnimation);
 
 closePopup.addEventListener("click",()=>{popup.style.display="none";});
 
@@ -158,8 +161,8 @@ solicitarPremio.addEventListener("click",()=>{
   const cajero = localStorage.getItem("assignedCajero");
   const premio = localStorage.getItem("premioGanado");
   if(cajero && premio){
-    // Redirigir al rotador real con cajero y premio
-    window.open(`https://linkdelasuerte.onrender.com?cajero=${encodeURIComponent(cajero)}&premio=${encodeURIComponent(premio)}`,"_blank");
+    // Redirige al backend para enviar el premio al cajero
+    window.open(`https://linkdelasuerte.onrender.com/enviar?cajero=${encodeURIComponent(cajero)}&premio=${encodeURIComponent(premio)}`,"_blank");
   }
 });
 </script>
