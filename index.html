@@ -34,7 +34,6 @@
       width: 100%;
       height: auto;
     }
-    /* Indicador flecha */
     .indicator {
       position: absolute;
       top: -10px;
@@ -47,7 +46,6 @@
       border-bottom: 25px solid yellow;
       filter: drop-shadow(0 0 5px #ff0);
     }
-    /* Botón Girar */
     #spinButton {
       margin-top: 20px;
       background: #ff0000;
@@ -70,7 +68,6 @@
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
       to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
-    /* Popup */
     #popup {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -125,22 +122,18 @@
   </style>
 </head>
 <body>
-  <!-- Imagen superior -->
   <header>
     <img src="https://iili.io/KRwFVG2.md.jpg" alt="Banner Casino">
   </header>
 
-  <!-- Texto llamativo -->
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
-  <!-- Ruleta con indicador -->
   <div class="wheel-container">
     <div class="indicator"></div>
     <canvas id="wheelCanvas" width="300" height="300"></canvas>
   </div>
   <button id="spinButton">GIRAR</button>
 
-  <!-- Popup -->
   <div id="popup">
     <div id="popupContent">
       <h2>¡GANASTE! 🎉</h2>
@@ -168,8 +161,7 @@
       { nombre: "Facu", numero: "1125127839" }
     ];
 
-    let currentCajeroIndex = localStorage.getItem("cajeroIndex") || 0;
-    let assignedCajero = localStorage.getItem("assignedCajero") || null;
+    let currentCajeroIndex = parseInt(localStorage.getItem("cajeroIndex")) || 0;
     let lastSpinTime = localStorage.getItem("lastSpinTime");
 
     const canvas = document.getElementById("wheelCanvas");
@@ -185,7 +177,6 @@
     const anglePerSegment = (2 * Math.PI) / numSegments;
     let currentAngle = 0;
 
-    // Dibujar ruleta
     function drawWheel() {
       const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
       for (let i = 0; i < numSegments; i++) {
@@ -221,7 +212,6 @@
       }
     }
 
-    // Animación de giro real
     function spinWheel() {
       let remaining = getRemainingTime();
       if (remaining > 0) {
@@ -232,8 +222,8 @@
       }
 
       spinButton.disabled = true;
-      const spinTime = 4000; // 4 segundos
-      const spinAngle = Math.random() * 360 + 1800; // entre 1800 y 2160 grados
+      const spinTime = 4000;
+      const spinAngle = Math.random() * 360 + 1800;
       const startAngle = currentAngle;
       const targetAngle = startAngle + spinAngle;
       const startTime = performance.now();
@@ -250,17 +240,15 @@
           drawRotatedWheel(currentAngle);
 
           // Calcular premio
-          const degrees = (currentAngle * 180 / Math.PI) % 360;
-          const index = Math.floor((numSegments - (degrees / (360/numSegments))) % numSegments);
+          const degrees = currentAngle % 360;
+          const index = Math.floor((degrees / (360/numSegments))) % numSegments;
           const premio = premios[index];
 
-          if (!assignedCajero) {
-            assignedCajero = currentCajeroIndex % cajeros.length;
-            localStorage.setItem("assignedCajero", assignedCajero);
-            currentCajeroIndex++;
-            localStorage.setItem("cajeroIndex", currentCajeroIndex);
-          }
-          const cajero = cajeros[assignedCajero];
+          // Asignar cajero rotativo
+          const cajero = cajeros[currentCajeroIndex % cajeros.length];
+          currentCajeroIndex++;
+          localStorage.setItem("cajeroIndex", currentCajeroIndex);
+
           lastSpinTime = Date.now();
           localStorage.setItem("lastSpinTime", lastSpinTime);
 
