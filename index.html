@@ -16,12 +16,58 @@
       overflow-x: hidden;
     }
 
-    /* LOGO PRINCIPAL */
-    #logoPrincipal {
+    /* CONTENEDOR PARA LOGO + MARQUESINA */
+    #logoWrapper {
+      position: relative;
       width: 260px;
-      margin: 20px auto 10px auto;
+      margin: 25px auto 10px auto;
+    }
+
+    /* LOGO ANIMADO */
+    #logoPrincipal {
+      width: 100%;
       display: block;
-      filter: drop-shadow(0 0 12px #ff00ff);
+      position: relative;
+      z-index: 3;
+      animation: logoPulse 2s infinite alternate ease-in-out;
+      filter: drop-shadow(0 0 20px #00ffff);
+    }
+
+    @keyframes logoPulse {
+      0% {
+        filter: drop-shadow(0 0 12px #ff00ff);
+        transform: scale(1);
+      }
+      100% {
+        filter: drop-shadow(0 0 30px #00ffff);
+        transform: scale(1.05);
+      }
+    }
+
+    /* 🔥 MARQUESINA GIRATORIA 🔥 */
+    #marquesina {
+      position: absolute;
+      top: -15px;
+      left: -15px;
+      width: 290px;
+      height: 290px;
+      border-radius: 50%;
+      z-index: 1;
+      background: conic-gradient(
+        #ff00ff,
+        #00ffff,
+        #ff00ff,
+        #00ffff,
+        #ff00ff
+      );
+      animation: spin 4s linear infinite;
+      filter: blur(5px) brightness(1.8);
+      opacity: 0.85;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
     }
 
     h1 {
@@ -76,10 +122,11 @@
     }
 
     @keyframes neonPulse {
-      from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+      from { box-shadow: 0 0 10px #ff00ff; }
+      to   { box-shadow: 0 0 30px #00ffff; }
     }
 
+    /* POPUP */
     #popup {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -102,7 +149,7 @@
 
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      to   { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -137,13 +184,45 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    #contactoFacu {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      color: #00ffea;
+      text-shadow: 0 0 8px #00ffff;
+      font-weight: bold;
+    }
+
+    #btnWhatsapp {
+      margin-top: 12px;
+      background: #25D366;
+      color: #fff;
+      border: none;
+      font-size: 1.2rem;
+      padding: 10px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 12px #25D366;
+    }
+
+    #btnWhatsapp img {
+      width: 22px;
+      height: 22px;
+    }
+
   </style>
 </head>
 
 <body>
 
-  <!-- LOGO PRINCIPAL -->
-  <img id="logoPrincipal" src="https://iili.io/KyhRSC7.md.jpg" alt="Logo">
+  <!-- 🔥 LOGO + MARQUESINA -->
+  <div id="logoWrapper">
+    <div id="marquesina"></div>
+    <img id="logoPrincipal" src="https://iili.io/KyjXyOB.md.png" alt="Logo Nuevo">
+  </div>
 
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
@@ -157,11 +236,20 @@
   <div id="popup">
     <div id="popupContent">
       <h2>¡GANASTE! 🎉</h2>
+
       <p id="premioTexto"></p>
       <p id="extraTexto"></p>
+
       <button id="solicitarBtn">Solicitar premio</button>
       <br>
       <button id="closePopup">Cerrar</button>
+
+      <p id="contactoFacu">📞 Contacto: 11 3821-9568 (Facu)</p>
+
+      <button id="btnWhatsapp">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
+        Contactar por WhatsApp
+      </button>
     </div>
   </div>
 
@@ -177,6 +265,7 @@
     ];
 
     let lastSpinTime = localStorage.getItem("lastSpinTime");
+
     const canvas = document.getElementById("wheelCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -186,6 +275,7 @@
     const extraTexto = document.getElementById("extraTexto");
     const solicitarBtn = document.getElementById("solicitarBtn");
     const closePopup = document.getElementById("closePopup");
+    const btnWhatsapp = document.getElementById("btnWhatsapp");
 
     const numSegments = premios.length;
     const anglePerSegment = (2 * Math.PI) / numSegments;
@@ -215,7 +305,12 @@
       extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
 
       popup.style.display = "flex";
+
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
+
+      btnWhatsapp.onclick = () => {
+        window.open("https://wa.me/541138219568", "_blank");
+      };
 
       if (!countdownText) {
         solicitarBtn.onclick = () => {
@@ -245,7 +340,6 @@
 
       function animate(time) {
         let elapsed = time - startTime;
-
         if (elapsed < spinTime) {
           const progress = elapsed / spinTime;
           currentAngle = startAngle + (spinAngle * (1 - Math.pow(1 - progress, 3)));
@@ -280,7 +374,7 @@
     }
 
     spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => { popup.style.display = "none"; });
+    closePopup.addEventListener("click", () => popup.style.display = "none");
   </script>
 
 </body>
