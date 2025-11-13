@@ -16,58 +16,24 @@
       overflow-x: hidden;
     }
 
-    /* CONTENEDOR PARA LOGO + MARQUESINA */
-    #logoWrapper {
-      position: relative;
-      width: 260px;
-      margin: 25px auto 10px auto;
-    }
-
-    /* LOGO ANIMADO */
+    /* 🔥 LOGO ANIMADO NEÓN */
     #logoPrincipal {
-      width: 100%;
+      width: 260px;
+      margin: 20px auto 15px auto;
       display: block;
-      position: relative;
-      z-index: 3;
       animation: logoPulse 2s infinite alternate ease-in-out;
-      filter: drop-shadow(0 0 20px #00ffff);
+      filter: drop-shadow(0 0 15px #00ffff);
     }
 
     @keyframes logoPulse {
       0% {
-        filter: drop-shadow(0 0 12px #ff00ff);
+        filter: drop-shadow(0 0 12px #ff00ff) brightness(1);
         transform: scale(1);
       }
       100% {
-        filter: drop-shadow(0 0 30px #00ffff);
+        filter: drop-shadow(0 0 25px #00ffff) brightness(1.25);
         transform: scale(1.05);
       }
-    }
-
-    /* 🔥 MARQUESINA GIRATORIA 🔥 */
-    #marquesina {
-      position: absolute;
-      top: -15px;
-      left: -15px;
-      width: 290px;
-      height: 290px;
-      border-radius: 50%;
-      z-index: 1;
-      background: conic-gradient(
-        #ff00ff,
-        #00ffff,
-        #ff00ff,
-        #00ffff,
-        #ff00ff
-      );
-      animation: spin 4s linear infinite;
-      filter: blur(5px) brightness(1.8);
-      opacity: 0.85;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
     }
 
     h1 {
@@ -122,8 +88,8 @@
     }
 
     @keyframes neonPulse {
-      from { box-shadow: 0 0 10px #ff00ff; }
-      to   { box-shadow: 0 0 30px #00ffff; }
+      from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
     /* POPUP */
@@ -149,7 +115,7 @@
 
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -185,6 +151,7 @@
       cursor: pointer;
     }
 
+    /* CONTACTO FACU */
     #contactoFacu {
       margin-top: 15px;
       font-size: 1.1rem;
@@ -193,6 +160,7 @@
       font-weight: bold;
     }
 
+    /* BOTON WHATSAPP */
     #btnWhatsapp {
       margin-top: 12px;
       background: #25D366;
@@ -218,11 +186,8 @@
 
 <body>
 
-  <!-- 🔥 LOGO + MARQUESINA -->
-  <div id="logoWrapper">
-    <div id="marquesina"></div>
-    <img id="logoPrincipal" src="https://iili.io/KyjXyOB.md.png" alt="Logo Nuevo">
-  </div>
+  <!-- LOGO NUEVO ANIMADO -->
+  <img id="logoPrincipal" src="https://iili.io/KyjXyOB.md.png" alt="Logo Nuevo">
 
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
@@ -250,6 +215,7 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
         Contactar por WhatsApp
       </button>
+
     </div>
   </div>
 
@@ -296,7 +262,7 @@
 
     function getRemainingTime() {
       if (!lastSpinTime) return 0;
-      const diff = Date.now() - parseInt(lastSpinTime);
+      const diff = Date.now() - parseInt(last.println(time));
       return 24*60*60*1000 - diff;
     }
 
