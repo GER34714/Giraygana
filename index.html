@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruleta de Premios</title>
+
   <style>
     body {
       margin: 0;
@@ -14,26 +15,33 @@
       text-align: center;
       overflow-x: hidden;
     }
-    header img {
-      width: 100%;
-      height: auto;
+
+    /* LOGO PRINCIPAL */
+    #logoPrincipal {
+      width: 260px;
+      margin: 20px auto 10px auto;
       display: block;
+      filter: drop-shadow(0 0 12px #ff00ff);
     }
+
     h1 {
       font-size: 1.8rem;
-      margin: 20px 0;
+      margin: 10px 0 20px 0;
       color: #ffcc00;
       text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
     }
+
     .wheel-container {
       position: relative;
       width: 320px;
       margin: 0 auto;
     }
+
     #wheelCanvas {
       width: 100%;
       height: auto;
     }
+
     .indicator {
       position: absolute;
       top: -10px;
@@ -46,6 +54,7 @@
       border-bottom: 25px solid yellow;
       filter: drop-shadow(0 0 5px #ff0);
     }
+
     #spinButton {
       margin-top: 20px;
       background: #ff0000;
@@ -58,16 +67,19 @@
       box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
       animation: neonPulse 1.5s infinite alternate;
     }
+
     #spinButton:disabled {
       background: gray;
       cursor: not-allowed;
       box-shadow: none;
       animation: none;
     }
+
     @keyframes neonPulse {
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
       to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
+
     #popup {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -77,6 +89,7 @@
       align-items: center;
       z-index: 9999;
     }
+
     #popupContent {
       background: #222;
       padding: 20px;
@@ -86,19 +99,23 @@
       box-shadow: 0 0 20px #ffcc00;
       animation: popupIn 0.5s ease;
     }
+
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+
     #popupContent h2 {
       font-size: 2rem;
       margin-bottom: 10px;
       color: #00ff99;
     }
+
     #popupContent p {
       margin: 10px 0;
       font-size: 1.2rem;
     }
+
     #solicitarBtn {
       margin-top: 15px;
       background: linear-gradient(45deg, #00ccff, #0066ff);
@@ -110,6 +127,7 @@
       cursor: pointer;
       box-shadow: 0 0 15px #00ccff;
     }
+
     #closePopup {
       margin-top: 15px;
       background: #ff3333;
@@ -121,10 +139,11 @@
     }
   </style>
 </head>
+
 <body>
-  <header>
-    <img src="https://iili.io/KRwFVG2.md.jpg" alt="Banner Casino">
-  </header>
+
+  <!-- LOGO PRINCIPAL -->
+  <img id="logoPrincipal" src="https://iili.io/KyhRSC7.md.jpg" alt="Logo">
 
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
@@ -132,6 +151,7 @@
     <div class="indicator"></div>
     <canvas id="wheelCanvas" width="300" height="300"></canvas>
   </div>
+
   <button id="spinButton">GIRAR</button>
 
   <div id="popup">
@@ -156,16 +176,10 @@
       "300 fichas (sin carga, no retirables)"
     ];
 
-    const cajeros = [
-      { nombre: "Joaki", numero: "1123365501" },
-      { nombre: "Facu", numero: "1125127839" }
-    ];
-
-    let currentCajeroIndex = parseInt(localStorage.getItem("cajeroIndex")) || 0;
     let lastSpinTime = localStorage.getItem("lastSpinTime");
-
     const canvas = document.getElementById("wheelCanvas");
     const ctx = canvas.getContext("2d");
+
     const spinButton = document.getElementById("spinButton");
     const popup = document.getElementById("popup");
     const premioTexto = document.getElementById("premioTexto");
@@ -196,17 +210,18 @@
       return 24*60*60*1000 - diff;
     }
 
-    function showPopup(premio, cajero, countdownText = null) {
+    function showPopup(premio, countdownText = null) {
       premioTexto.innerText = countdownText ? countdownText : `FELICIDADES 🎉 Te ganaste: ${premio}`;
       extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
+
       popup.style.display = "flex";
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
       if (!countdownText) {
         solicitarBtn.onclick = () => {
           const fecha = new Date().toLocaleString();
-          const mensaje = `Hola, ${cajero.nombre}. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
-          const url = `https://wa.me/54${cajero.numero}?text=${encodeURIComponent(mensaje)}`;
+          const mensaje = `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
+          const url = `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`;
           window.open(url, "_blank");
         };
       }
@@ -217,7 +232,7 @@
       if (remaining > 0) {
         const horas = Math.floor(remaining / (1000*60*60));
         const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
-        showPopup(null, null, `⏳ Podrás volver a girar en ${horas}h ${mins}m`);
+        showPopup(null, `⏳ Podrás volver a girar en ${horas}h ${mins}m`);
         return;
       }
 
@@ -230,37 +245,28 @@
 
       function animate(time) {
         let elapsed = time - startTime;
+
         if (elapsed < spinTime) {
           const progress = elapsed / spinTime;
-          currentAngle = startAngle + (spinAngle * easeOut(progress));
+          currentAngle = startAngle + (spinAngle * (1 - Math.pow(1 - progress, 3)));
           drawRotatedWheel(currentAngle);
           requestAnimationFrame(animate);
         } else {
           currentAngle = targetAngle;
           drawRotatedWheel(currentAngle);
 
-          // Calcular premio
           const degrees = currentAngle % 360;
-          const index = Math.floor((degrees / (360/numSegments))) % numSegments;
+          const index = Math.floor(degrees / (360/numSegments));
           const premio = premios[index];
-
-          // Asignar cajero rotativo
-          const cajero = cajeros[currentCajeroIndex % cajeros.length];
-          currentCajeroIndex++;
-          localStorage.setItem("cajeroIndex", currentCajeroIndex);
 
           lastSpinTime = Date.now();
           localStorage.setItem("lastSpinTime", lastSpinTime);
 
-          showPopup(premio, cajero);
+          showPopup(premio);
           spinButton.disabled = false;
         }
       }
       requestAnimationFrame(animate);
-    }
-
-    function easeOut(t) {
-      return 1 - Math.pow(1 - t, 3);
     }
 
     function drawRotatedWheel(angle) {
@@ -276,5 +282,6 @@
     spinButton.addEventListener("click", spinWheel);
     closePopup.addEventListener("click", () => { popup.style.display = "none"; });
   </script>
+
 </body>
 </html>
