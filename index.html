@@ -50,22 +50,56 @@
       margin: 0 auto;
     }
 
+    /* 🔥 ARO NEÓN PULSANTE */
+    .wheel-container::before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border-radius: 50%;
+      border: 6px solid #00eaff;
+      box-shadow: 
+        0 0 20px #00eaff,
+        0 0 40px #ff00ff,
+        0 0 60px #ffff00;
+      animation: neonBorderPulse 1.6s infinite alternate;
+      z-index: -1;
+    }
+
+    @keyframes neonBorderPulse {
+      from {
+        box-shadow:
+          0 0 15px #00eaff,
+          0 0 30px #ff00ff,
+          0 0 40px #ffff00;
+      }
+      to {
+        box-shadow:
+          0 0 40px #00eaff,
+          0 0 60px #ff00ff,
+          0 0 80px #ffff00;
+      }
+    }
+
     #wheelCanvas {
       width: 100%;
       height: auto;
     }
 
+    /* 🔥 INDICADOR — apuntando hacia abajo ahora */
     .indicator {
       position: absolute;
-      top: -10px;
+      bottom: -20px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 25px solid yellow;
-      filter: drop-shadow(0 0 5px #ff0);
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 30px solid yellow;
+      filter: drop-shadow(0 0 7px #ff0);
     }
 
     #spinButton {
@@ -90,7 +124,7 @@
 
     @keyframes neonPulse {
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+      to   { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
     /* POPUP */
@@ -116,7 +150,7 @@
 
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      to   { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -177,18 +211,12 @@
 
   <div id="popup">
     <div id="popupContent">
-
       <h2>¡GANASTE! 🎉</h2>
-
       <p id="premioTexto"></p>
       <p id="extraTexto"></p>
-
-      <button id="solicitarBtn">Solicitar premio</button>
-      <br>
+      <button id="solicitarBtn">Solicitar premio</button><br>
       <button id="closePopup">Cerrar</button>
-
       <p id="contactoFacu">📞 Contacto: 11 3821-9568 (Facu)</p>
-
     </div>
   </div>
 
