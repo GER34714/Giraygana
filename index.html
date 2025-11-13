@@ -16,24 +16,12 @@
       overflow-x: hidden;
     }
 
-    /* 🔥 LOGO ANIMADO NEÓN */
+    /* LOGO NUEVO */
     #logoPrincipal {
       width: 260px;
       margin: 20px auto 15px auto;
       display: block;
-      animation: logoPulse 2s infinite alternate ease-in-out;
       filter: drop-shadow(0 0 15px #00ffff);
-    }
-
-    @keyframes logoPulse {
-      0% {
-        filter: drop-shadow(0 0 12px #ff00ff) brightness(1);
-        transform: scale(1);
-      }
-      100% {
-        filter: drop-shadow(0 0 25px #00ffff) brightness(1.25);
-        transform: scale(1.05);
-      }
     }
 
     h1 {
@@ -186,7 +174,7 @@
 
 <body>
 
-  <!-- LOGO NUEVO ANIMADO -->
+  <!-- LOGO NUEVO -->
   <img id="logoPrincipal" src="https://iili.io/KyjXyOB.md.png" alt="Logo Nuevo">
 
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
@@ -262,7 +250,7 @@
 
     function getRemainingTime() {
       if (!lastSpinTime) return 0;
-      const diff = Date.now() - parseInt(last.println(time));
+      const diff = Date.now() - parseInt(lastSpinTime);
       return 24*60*60*1000 - diff;
     }
 
@@ -274,6 +262,7 @@
 
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
+      // Botón WhatsApp directo
       btnWhatsapp.onclick = () => {
         window.open("https://wa.me/541138219568", "_blank");
       };
@@ -306,6 +295,7 @@
 
       function animate(time) {
         let elapsed = time - startTime;
+
         if (elapsed < spinTime) {
           const progress = elapsed / spinTime;
           currentAngle = startAngle + (spinAngle * (1 - Math.pow(1 - progress, 3)));
