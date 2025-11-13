@@ -10,13 +10,24 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
       text-align: center;
       overflow-x: hidden;
+
+      /* 🔥 FONDO NUEVO */
+      background: url("https://iili.io/KywIjWP.md.jpg") no-repeat center center fixed;
+      background-size: cover;
     }
 
-    /* LOGO NUEVO */
+    /* Capa oscura suave */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: -1;
+    }
+
+    /* LOGO */
     #logoPrincipal {
       width: 260px;
       margin: 20px auto 15px auto;
@@ -77,7 +88,7 @@
 
     @keyframes neonPulse {
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+      to   { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
     /* POPUP */
@@ -103,7 +114,7 @@
 
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      to   { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -139,7 +150,7 @@
       cursor: pointer;
     }
 
-    /* CONTACTO FACU */
+    /* CONTACTO */
     #contactoFacu {
       margin-top: 15px;
       font-size: 1.1rem;
@@ -148,7 +159,7 @@
       font-weight: bold;
     }
 
-    /* BOTON WHATSAPP */
+    /* BOTÓN WHATSAPP */
     #btnWhatsapp {
       margin-top: 12px;
       background: #25D366;
@@ -174,7 +185,7 @@
 
 <body>
 
-  <!-- LOGO NUEVO -->
+  <!-- LOGO -->
   <img id="logoPrincipal" src="https://iili.io/KyjXyOB.md.png" alt="Logo Nuevo">
 
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
@@ -186,6 +197,7 @@
 
   <button id="spinButton">GIRAR</button>
 
+  <!-- POPUP -->
   <div id="popup">
     <div id="popupContent">
       <h2>¡GANASTE! 🎉</h2>
@@ -262,7 +274,6 @@
 
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
-      // Botón WhatsApp directo
       btnWhatsapp.onclick = () => {
         window.open("https://wa.me/541138219568", "_blank");
       };
@@ -330,7 +341,7 @@
     }
 
     spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => popup.style.display = "none");
+    closePopup.addEventListener("click", () => popup.style.display="none");
   </script>
 
 </body>
