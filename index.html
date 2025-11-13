@@ -59,17 +59,11 @@
       right: -18px;
       bottom: -18px;
       border-radius: 50%;
-
-      border: 6px solid transparent;
-      background: 
-        radial-gradient(circle, rgba(0,234,255,0.8), rgba(255,0,255,0.8), rgba(255,255,0,0.8));
-      background-clip: padding-box;
-
+      background: radial-gradient(circle, #00eaff80, #ff00ff80, #ffff0080);
       box-shadow:
         0 0 25px #00eaff,
         0 0 50px #ff00ff,
         0 0 80px #ffff00;
-
       z-index: -1;
     }
 
@@ -78,20 +72,19 @@
       height: auto;
     }
 
-    /* ⭐ FLECHA FIX — MÁS ARRIBA, MÁS CHICA, NO TAPA NADA */
+    /* ⭐ INDICADOR NUEVO (PALITO NEÓN) */
     .indicator {
       position: absolute;
-      top: -55px; /* más arriba */
+      top: -60px;
       left: 50%;
       transform: translateX(-50%);
-      width: 0;
-      height: 0;
-
-      border-left: 16px solid transparent;
-      border-right: 16px solid transparent;
-      border-top: 28px solid yellow; /* punta hacia abajo */
-
-      filter: drop-shadow(0 0 6px #ff0);
+      width: 6px;
+      height: 35px;
+      background: yellow;
+      border-radius: 3px;
+      box-shadow: 
+        0 0 10px #ffff00,
+        0 0 20px #ffff00;
       z-index: 10;
     }
 
@@ -278,7 +271,8 @@
       if (!countdownText) {
         solicitarBtn.onclick = () => {
           const fecha = new Date().toLocaleString();
-          const mensaje = `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
+          const mensaje =
+            `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
           window.open(
             `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`,
             "_blank"
@@ -320,7 +314,7 @@
           currentAngle = targetAngle;
           drawRotatedWheel(currentAngle);
 
-          /* 🔥 CLICK FINAL */
+          /* 🔥 SONIDO FINAL */
           const finalSound = document.getElementById("clickFinal");
           finalSound.currentTime = 0;
           finalSound.play();
