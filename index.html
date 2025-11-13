@@ -10,20 +10,18 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
       text-align: center;
       overflow-x: hidden;
-
-      /* FONDO SIN OSCURECER */
-      background: url("https://iili.io/KywIjWP.md.jpg") no-repeat center center fixed;
-      background-size: cover;
     }
 
     /* LOGO */
     #logoPrincipal {
       width: 260px;
-      margin: 20px auto 15px auto;
+      margin: 20px auto 10px auto;
       display: block;
-      filter: drop-shadow(0 0 15px #00ffff);
+      filter: drop-shadow(0 0 12px #ff00ff);
     }
 
     h1 {
@@ -78,8 +76,8 @@
     }
 
     @keyframes neonPulse {
-      from { box-shadow: 0 0 10px #ff00ff; }
-      to   { box-shadow: 0 0 20px #00ffff; }
+      from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
     /* POPUP */
@@ -100,6 +98,12 @@
       text-align: center;
       max-width: 90%;
       box-shadow: 0 0 20px #ffcc00;
+      animation: popupIn 0.5s ease;
+    }
+
+    @keyframes popupIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -135,6 +139,7 @@
       cursor: pointer;
     }
 
+    /* 🔥 NUEVO: contacto fijo debajo del modal */
     #contactoFacu {
       margin-top: 15px;
       font-size: 1.1rem;
@@ -142,32 +147,12 @@
       text-shadow: 0 0 8px #00ffff;
       font-weight: bold;
     }
-
-    #btnWhatsapp {
-      margin-top: 12px;
-      background: #25D366;
-      color: #fff;
-      border: none;
-      font-size: 1.2rem;
-      padding: 10px 25px;
-      border-radius: 50px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 0 12px #25D366;
-    }
-
-    #btnWhatsapp img {
-      width: 22px;
-      height: 22px;
-    }
   </style>
 </head>
 
 <body>
 
-  <img id="logoPrincipal" src="https://iili.io/KyjXyOB.md.png" alt="Logo">
+  <img id="logoPrincipal" src="https://iili.io/KyhRSC7.md.jpg" alt="Logo">
 
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
@@ -189,12 +174,8 @@
       <br>
       <button id="closePopup">Cerrar</button>
 
+      <!-- 🔥 NUEVO: CONTACTO DE FACU FIJO -->
       <p id="contactoFacu">📞 Contacto: 11 3821-9568 (Facu)</p>
-
-      <button id="btnWhatsapp">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
-        Contactar por WhatsApp
-      </button>
 
     </div>
   </div>
@@ -221,7 +202,6 @@
     const extraTexto = document.getElementById("extraTexto");
     const solicitarBtn = document.getElementById("solicitarBtn");
     const closePopup = document.getElementById("closePopup");
-    const btnWhatsapp = document.getElementById("btnWhatsapp");
 
     const numSegments = premios.length;
     const anglePerSegment = (2 * Math.PI) / numSegments;
@@ -243,7 +223,7 @@
     function getRemainingTime() {
       if (!lastSpinTime) return 0;
       const diff = Date.now() - parseInt(lastSpinTime);
-      return 24 * 60 * 60 * 1000 - diff;
+      return 24*60*60*1000 - diff;
     }
 
     function showPopup(premio, countdownText = null) {
@@ -251,21 +231,14 @@
       extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
 
       popup.style.display = "flex";
-
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
-
-      btnWhatsapp.onclick = () => {
-        window.open("https://wa.me/541138219568", "_blank");
-      };
 
       if (!countdownText) {
         solicitarBtn.onclick = () => {
           const fecha = new Date().toLocaleString();
           const mensaje = `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
-          window.open(
-            `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`,
-            "_blank"
-          );
+          const url = `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`;
+          window.open(url, "_blank");
         };
       }
     }
@@ -273,8 +246,8 @@
     function spinWheel() {
       let remaining = getRemainingTime();
       if (remaining > 0) {
-        const horas = Math.floor(remaining / (1000 * 60 * 60));
-        const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const horas = Math.floor(remaining / (1000*60*60));
+        const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
         showPopup(null, `⏳ Podrás volver a girar en ${horas}h ${mins}m`);
         return;
       }
@@ -299,7 +272,7 @@
           drawRotatedWheel(currentAngle);
 
           const degrees = currentAngle % 360;
-          const index = Math.floor(degrees / (360 / numSegments));
+          const index = Math.floor(degrees / (360/numSegments));
           const premio = premios[index];
 
           lastSpinTime = Date.now();
@@ -309,7 +282,6 @@
           spinButton.disabled = false;
         }
       }
-
       requestAnimationFrame(animate);
     }
 
@@ -324,7 +296,7 @@
     }
 
     spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => popup.style.display = "none");
+    closePopup.addEventListener("click", () => { popup.style.display = "none"; });
   </script>
 
 </body>
