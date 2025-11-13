@@ -36,21 +36,42 @@
       margin: 0 auto;
     }
 
+    /* ARO NEÓN MULTICOLOR GIRATORIO */
+    .rgb-ring {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      width: 344px;
+      height: 344px;
+      border-radius: 50%;
+      background: conic-gradient(#ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0066ff, #9900ff, #ff00ff, #ff0000);
+      animation: rgbSpin 4s linear infinite;
+      filter: blur(6px) brightness(1.8);
+      z-index: -1;
+    }
+
+    @keyframes rgbSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     #wheelCanvas {
       width: 100%;
       height: auto;
+      border-radius: 50%;
     }
 
+    /* Flecha invertida (punta hacia abajo) */
     .indicator {
       position: absolute;
-      top: -10px;
+      top: -35px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
       border-left: 15px solid transparent;
       border-right: 15px solid transparent;
-      border-bottom: 25px solid yellow;
+      border-top: 25px solid yellow;
       filter: drop-shadow(0 0 5px #ff0);
     }
 
@@ -138,7 +159,6 @@
       cursor: pointer;
     }
 
-    /* 🔥 CONTACTO FACU */
     #contactoFacu {
       margin-top: 15px;
       font-size: 1.1rem;
@@ -147,7 +167,6 @@
       font-weight: bold;
     }
 
-    /* 🔥 BOTÓN WHATSAPP */
     #btnWhatsapp {
       margin-top: 10px;
       background: #25D366;
@@ -178,6 +197,7 @@
   <h1>🎉 GIRA LA RUEDA Y GANA INCREÍBLES PREMIOS! 🎁</h1>
 
   <div class="wheel-container">
+    <div class="rgb-ring"></div>
     <div class="indicator"></div>
     <canvas id="wheelCanvas" width="300" height="300"></canvas>
   </div>
@@ -195,10 +215,8 @@
       <br>
       <button id="closePopup">Cerrar</button>
 
-      <!-- 🔥 CONTACTO FACU -->
       <p id="contactoFacu">📞 Contacto: 11 3821-9568 (Facu)</p>
 
-      <!-- 🔥 BOTÓN VERDE WHATSAPP -->
       <button id="btnWhatsapp">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
         Contactar por WhatsApp
@@ -206,6 +224,9 @@
 
     </div>
   </div>
+
+  <!-- CONFETTI LIBRARY -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
     const premios = [
@@ -231,6 +252,10 @@
     const closePopup = document.getElementById("closePopup");
     const btnWhatsapp = document.getElementById("btnWhatsapp");
 
+    /* SONIDOS */
+    const sonidoGiro = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_15b88e99ff.mp3?filename=wheel-spin-1-110166.mp3");
+    const sonidoDing = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5646dd24c8.mp3?filename=ding-126626.mp3");
+
     const numSegments = premios.length;
     const anglePerSegment = (2 * Math.PI) / numSegments;
     let currentAngle = 0;
@@ -255,13 +280,22 @@
     }
 
     function showPopup(premio, countdownText = null) {
+
+      // CONFETI SOLO SI HAY PREMIO
+      if (!countdownText) {
+        confetti({
+          particleCount: 200,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+
       premioTexto.innerText = countdownText ? countdownText : `FELICIDADES 🎉 Te ganaste: ${premio}`;
       extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
 
       popup.style.display = "flex";
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
-      // WhatsApp contacto directo
       btnWhatsapp.onclick = () => {
         const url = `https://wa.me/541138219568`;
         window.open(url, "_blank");
@@ -287,6 +321,10 @@
       }
 
       spinButton.disabled = true;
+
+      sonidoGiro.currentTime = 0;
+      sonidoGiro.play();
+
       const spinTime = 4000;
       const spinAngle = Math.random() * 360 + 1800;
       const startAngle = currentAngle;
@@ -302,6 +340,10 @@
           drawRotatedWheel(currentAngle);
           requestAnimationFrame(animate);
         } else {
+          sonidoGiro.pause();
+          sonidoGiro.currentTime = 0;
+          sonidoDing.play();
+
           currentAngle = targetAngle;
           drawRotatedWheel(currentAngle);
 
