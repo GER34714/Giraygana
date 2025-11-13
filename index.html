@@ -50,37 +50,24 @@
       margin: 0 auto;
     }
 
-    /* 🔥 ARO NEÓN PULSANTE */
+    /* ⭐ ARO DE NEÓN FIJO (SIN PULSO) */
     .wheel-container::before {
       content: "";
       position: absolute;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: -10px;
+      top: -12px;
+      left: -12px;
+      right: -12px;
+      bottom: -12px;
       border-radius: 50%;
       border: 6px solid #00eaff;
-      box-shadow: 
-        0 0 20px #00eaff,
-        0 0 40px #ff00ff,
-        0 0 60px #ffff00;
-      animation: neonBorderPulse 1.6s infinite alternate;
-      z-index: -1;
-    }
 
-    @keyframes neonBorderPulse {
-      from {
-        box-shadow:
-          0 0 15px #00eaff,
-          0 0 30px #ff00ff,
-          0 0 40px #ffff00;
-      }
-      to {
-        box-shadow:
-          0 0 40px #00eaff,
-          0 0 60px #ff00ff,
-          0 0 80px #ffff00;
-      }
+      /* ⭐ LUZ NEÓN REAL */
+      box-shadow:
+        0 0 25px #00eaff,
+        0 0 50px #ff00ff,
+        0 0 70px #ffff00;
+
+      z-index: -1;
     }
 
     #wheelCanvas {
@@ -88,18 +75,21 @@
       height: auto;
     }
 
-    /* 🔥 INDICADOR — apuntando hacia abajo ahora */
+    /* ⭐ FLECHA ARRIBA - PUNTA HACIA ABAJO */
     .indicator {
       position: absolute;
-      bottom: -20px;
+      top: -40px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-top: 30px solid yellow;
+
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-top: 35px solid yellow;
+
       filter: drop-shadow(0 0 7px #ff0);
+      z-index: 10;
     }
 
     #spinButton {
@@ -211,14 +201,22 @@
 
   <div id="popup">
     <div id="popupContent">
+
       <h2>¡GANASTE! 🎉</h2>
       <p id="premioTexto"></p>
       <p id="extraTexto"></p>
+
       <button id="solicitarBtn">Solicitar premio</button><br>
       <button id="closePopup">Cerrar</button>
+
       <p id="contactoFacu">📞 Contacto: 11 3821-9568 (Facu)</p>
+
     </div>
   </div>
+
+  <!-- 🔥 SONIDOS -->
+  <audio id="ruletaSonido" src="https://cdn.pixabay.com/audio/2022/03/15/audio_8e1c444cf0.mp3"></audio>
+  <audio id="clickFinal" src="https://cdn.pixabay.com/audio/2021/08/04/audio_37d3b16ba2.mp3"></audio>
 
   <script>
     const premios = [
@@ -295,6 +293,11 @@
         return;
       }
 
+      /* 🔥 SONIDO INICIAL */
+      const sonido = document.getElementById("ruletaSonido");
+      sonido.currentTime = 0;
+      sonido.play();
+
       spinButton.disabled = true;
       const spinTime = 4000;
       const spinAngle = Math.random() * 360 + 1800;
@@ -313,6 +316,11 @@
         } else {
           currentAngle = targetAngle;
           drawRotatedWheel(currentAngle);
+
+          /* 🔥 CLICK FINAL */
+          const finalSound = document.getElementById("clickFinal");
+          finalSound.currentTime = 0;
+          finalSound.play();
 
           const degrees = currentAngle % 360;
           const index = Math.floor(degrees / (360/numSegments));
