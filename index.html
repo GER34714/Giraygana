@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruleta de Premios</title>
 
+  <!-- 🔥 OG META TAGS -->
+  <meta property="og:title" content="🎰 Ruleta de Premios | FACU CASINO™">
+  <meta property="og:description" content="Girás una vez por día y podés ganar fichas, bonos y premios exclusivos. ¡Probá tu suerte ahora!">
+  <meta property="og:image" content="https://iili.io/KyhRSC7.md.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tu-dominio-o-render.onrender.com">
+
+  <!-- 🔥 TWITTER META TAGS -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="🎉 Ruleta de Premios | FACU CASINO™">
+  <meta name="twitter:description" content="Girás una vez por día y accedés a premios exclusivos. ¡La suerte está de tu lado!">
+  <meta name="twitter:image" content="https://iili.io/KyhRSC7.md.jpg">
+
   <style>
     body {
       margin: 0;
@@ -139,7 +152,6 @@
       cursor: pointer;
     }
 
-    /* 🔥 NUEVO: contacto fijo debajo del modal */
     #contactoFacu {
       margin-top: 15px;
       font-size: 1.1rem;
@@ -165,6 +177,7 @@
 
   <div id="popup">
     <div id="popupContent">
+
       <h2>¡GANASTE! 🎉</h2>
 
       <p id="premioTexto"></p>
@@ -174,7 +187,6 @@
       <br>
       <button id="closePopup">Cerrar</button>
 
-      <!-- 🔥 NUEVO: CONTACTO DE FACU FIJO -->
       <p id="contactoFacu">📞 Contacto: 11 3821-9568 (Facu)</p>
 
     </div>
@@ -231,14 +243,17 @@
       extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
 
       popup.style.display = "flex";
+
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
       if (!countdownText) {
         solicitarBtn.onclick = () => {
           const fecha = new Date().toLocaleString();
           const mensaje = `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
-          const url = `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`;
-          window.open(url, "_blank");
+          window.open(
+            `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`,
+            "_blank"
+          );
         };
       }
     }
@@ -282,6 +297,7 @@
           spinButton.disabled = false;
         }
       }
+
       requestAnimationFrame(animate);
     }
 
@@ -296,7 +312,7 @@
     }
 
     spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => { popup.style.display = "none"; });
+    closePopup.addEventListener("click", () => popup.style.display="none");
   </script>
 
 </body>
