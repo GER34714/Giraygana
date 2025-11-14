@@ -18,13 +18,16 @@
       padding: 0;
       font-family: Arial, sans-serif;
 
-      /* 🔥 CORREGIDO: antes estaba "fixed" y no te dejaba mover la ruleta */
+      /* 🔥 Fondo sin fixed para poder ajustar la ruleta */
       background: url('https://iili.io/KyiWUhP.md.png') no-repeat center top;
       background-size: cover;
 
       color: #fff;
       text-align: center;
       overflow-x: hidden;
+
+      /* 🔥 Ajuste RESPONSIVO REAL de la ruleta sobre la del bufón */
+      padding-top: 32vh; /* 👈 ESTA ES LA CLAVE: ruleta ajustada y sin espacio abajo */
     }
 
     h1 {
@@ -38,9 +41,7 @@
     .wheel-container {
       position: relative;
       width: 320px;
-
-      /* 🔥 AHORA SÍ FUNCIONA — SUBE / BAJA LA RULETA */
-      margin: 300px auto 0 auto;
+      margin: 0 auto; /* 👈 YA NO NECESITÁS MARGIN-TOP */
     }
 
     .rgb-ring {
@@ -192,48 +193,21 @@
     }
 
     @media (max-width: 480px) {
+      body {
+        padding-top: 38vh; /* 📱 Ajuste especial para celulares */
+      }
+
       h1 {
         font-size: 1.4rem;
-        margin: 5px 0 15px 0;
       }
 
       .wheel-container {
         width: 250px;
-        margin-top: 200px; /* 🔥 ajustable */
       }
 
       .rgb-ring {
         width: 270px;
         height: 270px;
-        top: -10px;
-        left: -10px;
-      }
-
-      .indicator {
-        top: -30px;
-        border-left: 12px solid transparent;
-        border-right: 12px solid transparent;
-        border-top: 20px solid yellow;
-      }
-
-      #spinButton {
-        font-size: 1.2rem;
-        padding: 12px 30px;
-      }
-
-      #popupContent h2 {
-        font-size: 1.6rem;
-      }
-
-      #popupContent p {
-        font-size: 1rem;
-      }
-
-      #solicitarBtn,
-      #closePopup,
-      #btnWhatsapp {
-        font-size: 1rem;
-        padding: 10px 18px;
       }
     }
   </style>
@@ -270,6 +244,7 @@
     </div>
   </div>
 
+  <!-- CONFETTI -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
@@ -299,16 +274,15 @@
     const sonidoGiro = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_15b88e99ff.mp3?filename=wheel-spin-1-110166.mp3");
     const sonidoDing = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5646dd24c8.mp3?filename=ding-126626.mp3");
 
-    const numSegments = premios.length;
-    const anglePerSegment = (2 * Math.PI) / numSegments;
+    const anglePerSegment = (2 * Math.PI) / premios.length;
     let currentAngle = 0;
 
     function drawWheel() {
       const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
-      for (let i = 0; i < numSegments; i++) {
+      for (let i = 0; i < premios.length; i++) {
         ctx.beginPath();
         ctx.moveTo(150,150);
-        ctx.arc(150,150,150,i * anglePerSegment,(i + 1) * anglePerSegment);
+        ctx.arc(150,150,150,i*anglePerSegment,(i+1)*anglePerSegment);
         ctx.fillStyle = colors[i % colors.length];
         ctx.fill();
         ctx.stroke();
@@ -319,12 +293,12 @@
     function getRemainingTime() {
       if (!lastSpinTime) return 0;
       const diff = Date.now() - parseInt(lastSpinTime);
-      return 24*60*60*1000 - diff;
+      return 86400000 - diff;
     }
 
-    function showPopup(premio, countdownText = null) {
+    function showPopup(premio, countdown = null) {
 
-      if (!countdownText) {
+      if (!countdown) {
         confetti({
           particleCount: 200,
           spread: 80,
@@ -332,32 +306,31 @@
         });
       }
 
-      premioTexto.innerText = countdownText ? countdownText : `FELICIDADES 🎉 Ganaste: ${premio}`;
-      extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
+      premioTexto.innerText = countdown ? countdown : `FELICIDADES 🎉 Ganaste: ${premio}`;
+      extraTexto.innerText = countdown ? "" : "Recordá volver en 24 hs para volver a girar";
 
       popup.style.display = "flex";
-      solicitarBtn.style.display = countdownText ? "none" : "inline-block";
+      solicitarBtn.style.display = countdown ? "none" : "inline-block";
 
       btnWhatsapp.onclick = () => {
-        window.open(`https://wa.me/541138219568`,"_blank");
+        window.open("https://wa.me/541138219568","_blank");
       };
 
-      if (!countdownText) {
+      if (!countdown) {
         solicitarBtn.onclick = () => {
           const fecha = new Date().toLocaleString();
           const mensaje = `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
-          const url = `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`;
-          window.open(url, "_blank");
+          window.open(`https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`,"_blank");
         };
       }
     }
 
     function spinWheel() {
-      let remaining = getRemainingTime();
-      if (remaining > 0) {
-        const horas = Math.floor(remaining / (1000*60*60));
-        const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
-        showPopup(null, `⏳ Podrás volver a girar en ${horas}h ${mins}m`);
+      let restante = getRemainingTime();
+      if (restante > 0) {
+        const h = Math.floor(restante / 3600000);
+        const m = Math.floor((restante % 3600000) / 60000);
+        showPopup(null, `⏳ Podrás volver a girar en ${h}h ${m}m`);
         return;
       }
 
@@ -367,29 +340,29 @@
 
       const spinTime = 4000;
       const spinAngle = Math.random() * 360 + 1800;
-      const startAngle = currentAngle;
-      const targetAngle = startAngle + spinAngle;
-      const startTime = performance.now();
+      const inicio = currentAngle;
+      const destino = inicio + spinAngle;
+      const inicioTiempo = performance.now();
 
-      function animate(time) {
-        let elapsed = time - startTime;
+      function animar(t) {
+        let transcurrido = t - inicioTiempo;
 
-        if (elapsed < spinTime) {
-          const progress = elapsed / spinTime;
-          currentAngle = startAngle + (spinAngle * (1 - Math.pow(1 - progress, 3)));
-          drawRotatedWheel(currentAngle);
-          requestAnimationFrame(animate);
+        if (transcurrido < spinTime) {
+          const progreso = transcurrido / spinTime;
+          currentAngle = inicio + (spinAngle * (1 - Math.pow(1 - progreso, 3)));
+          rotarRuleta(currentAngle);
+          requestAnimationFrame(animar);
         } else {
           sonidoGiro.pause();
           sonidoGiro.currentTime = 0;
           sonidoDing.play();
 
-          currentAngle = targetAngle;
-          drawRotatedWheel(currentAngle);
+          currentAngle = destino;
+          rotarRuleta(currentAngle);
 
-          const degrees = currentAngle % 360;
-          const index = Math.floor(degrees / (360/numSegments));
-          const premio = premios[index];
+          const grados = currentAngle % 360;
+          const indice = Math.floor(grados / (360/premios.length));
+          const premio = premios[indice];
 
           lastSpinTime = Date.now();
           localStorage.setItem("lastSpinTime", lastSpinTime);
@@ -398,21 +371,21 @@
           spinButton.disabled = false;
         }
       }
-      requestAnimationFrame(animate);
+      requestAnimationFrame(animar);
     }
 
-    function drawRotatedWheel(angle) {
+    function rotarRuleta(angulo) {
       ctx.clearRect(0,0,canvas.width,canvas.height);
       ctx.save();
       ctx.translate(150,150);
-      ctx.rotate(angle * Math.PI / 180);
+      ctx.rotate(angulo * Math.PI / 180);
       ctx.translate(-150,-150);
       drawWheel();
       ctx.restore();
     }
 
     spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => { popup.style.display = "none"; });
+    closePopup.addEventListener("click", () => popup.style.display = "none");
   </script>
 
 </body>
