@@ -35,7 +35,9 @@
     .wheel-container {
       position: relative;
       width: 320px;
-      margin: 30px auto 0 auto;
+
+      /* 🔥 BAJADA PERFECTA DE LA RULETA */
+      margin: 150px auto 0 auto;
     }
 
     .rgb-ring {
@@ -187,7 +189,6 @@
     }
 
     @media (max-width: 480px) {
-
       h1 {
         font-size: 1.4rem;
         margin: 5px 0 15px 0;
@@ -195,6 +196,7 @@
 
       .wheel-container {
         width: 250px;
+        margin-top: 150px;
       }
 
       .rgb-ring {
@@ -249,7 +251,6 @@
   <div id="popup">
     <div id="popupContent">
       <h2>¡GANASTE! 🎉</h2>
-
       <p id="premioTexto"></p>
       <p id="extraTexto"></p>
 
@@ -263,7 +264,6 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
         Contactar por WhatsApp
       </button>
-
     </div>
   </div>
 
@@ -305,7 +305,7 @@
       for (let i = 0; i < numSegments; i++) {
         ctx.beginPath();
         ctx.moveTo(150,150);
-        ctx.arc(150,150,150,i*anglePerSegment,(i+1)*anglePerSegment);
+        ctx.arc(150,150,150,i * anglePerSegment,(i + 1) * anglePerSegment);
         ctx.fillStyle = colors[i % colors.length];
         ctx.fill();
         ctx.stroke();
@@ -336,8 +336,7 @@
       solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
       btnWhatsapp.onclick = () => {
-        const url = `https://wa.me/541138219568`;
-        window.open(url, "_blank");
+        window.open(`https://wa.me/541138219568`,"_blank");
       };
 
       if (!countdownText) {
