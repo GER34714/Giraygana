@@ -5,12 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruleta de Premios</title>
 
+  <!-- 🔥 OPEN GRAPH PARA VISTA PREVIA -->
+  <meta property="og:title" content="🎰 Ruleta de Premios | FACU CASINO™">
+  <meta property="og:description" content="Girá la rueda y descubrí tu premio.">
+  <meta property="og:image" content="https://iili.io/KyPeQBS.md.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://facucasino.onrender.com">
+
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #111;
+      background: url('https://iili.io/KyP8nXR.md.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #fff;
       text-align: center;
       overflow-x: hidden;
@@ -34,10 +42,9 @@
     .wheel-container {
       position: relative;
       width: 320px;
-      margin: 30px auto 0 auto; /* 🔥 BAJADA 2 CM */
+      margin: 30px auto 0 auto;
     }
 
-    /* ARO NEÓN MULTICOLOR GIRATORIO */
     .rgb-ring {
       position: absolute;
       top: -12px;
@@ -62,7 +69,6 @@
       border-radius: 50%;
     }
 
-    /* Flecha invertida (punta hacia abajo) */
     .indicator {
       position: absolute;
       top: -35px;
@@ -101,7 +107,6 @@
       to   { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
-    /* POPUP */
     #popup {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -188,9 +193,9 @@
       height: 22px;
     }
 
-    /* 📱 RESPONSIVE MOBILE */
+    /* RESPONSIVE */
     @media (max-width: 480px) {
-      
+
       #logoPrincipal {
         width: 200px;
         margin-top: 15px;
@@ -244,7 +249,8 @@
 
 <body>
 
-  <img id="logoPrincipal" src="https://iili.io/KyhRSC7.md.jpg" alt="Logo">
+  <!-- LOGO NUEVO -->
+  <img id="logoPrincipal" src="https://iili.io/KyPwhml.md.png" alt="Logo">
 
   <h1>🎉Girá la rueda y descubrí tu premio🎁</h1>
 
@@ -277,7 +283,6 @@
     </div>
   </div>
 
-  <!-- CONFETTI LIBRARY -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
@@ -304,7 +309,6 @@
     const closePopup = document.getElementById("closePopup");
     const btnWhatsapp = document.getElementById("btnWhatsapp");
 
-    /* SONIDOS */
     const sonidoGiro = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_15b88e99ff.mp3?filename=wheel-spin-1-110166.mp3");
     const sonidoDing = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5646dd24c8.mp3?filename=ding-126626.mp3");
 
@@ -313,9 +317,7 @@
     let currentAngle = 0;
 
     function drawWheel() {
-      const colors = ["#ff0000","#ff9900","#ffff00",
-                      "#00ff00","#00ccff","#0066ff","#9900ff"];
-
+      const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
       for (let i = 0; i < numSegments; i++) {
         ctx.beginPath();
         ctx.moveTo(150,150);
@@ -335,7 +337,6 @@
 
     function showPopup(premio, countdownText = null) {
 
-      // CONFETI SOLO SI HAY PREMIO
       if (!countdownText) {
         confetti({
           particleCount: 200,
@@ -375,7 +376,6 @@
       }
 
       spinButton.disabled = true;
-
       sonidoGiro.currentTime = 0;
       sonidoGiro.play();
 
