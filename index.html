@@ -8,7 +8,7 @@
   <!-- 🔥 OPEN GRAPH PARA VISTA PREVIA -->
   <meta property="og:title" content="🎰 Ruleta de Premios | FACU CASINO™">
   <meta property="og:description" content="Girá la rueda y descubrí tu premio.">
-  <meta property="og:image" content="https://iili.io/KyPeQBS.md.jpg">
+  <meta property="og:image" content="https://iili.io/KyLa3sj.md.jpg">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://facucasino.onrender.com">
 
@@ -18,16 +18,34 @@
       padding: 0;
       font-family: Arial, sans-serif;
 
-      /* 🔥 Fondo sin fixed para poder ajustar la ruleta */
-      background: url('https://iili.io/KyiWUhP.md.png') no-repeat center top;
+      /* Fondo nuevo + capa de opacidad suave */
+      background: url('https://iili.io/KyL5Hba.md.jpg') no-repeat center top;
       background-size: cover;
-
+      position: relative;
       color: #fff;
       text-align: center;
       overflow-x: hidden;
+    }
 
-      /* 🔥 Ajuste RESPONSIVO REAL de la ruleta sobre la del bufón */
-      padding-top: 32vh; /* 👈 ESTA ES LA CLAVE: ruleta ajustada y sin espacio abajo */
+    /* Capa de opacidad suave sobre el fondo */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.25); /* 🔥 Ajustá 0.25 para más/menos opacidad */
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* LOGO PRINCIPAL NUEVO */
+    #logoPrincipal {
+      width: 260px;
+      margin: 20px auto 10px auto;
+      display: block;
+      filter: drop-shadow(0 0 10px #ff00ff);
     }
 
     h1 {
@@ -41,7 +59,7 @@
     .wheel-container {
       position: relative;
       width: 320px;
-      margin: 0 auto; /* 👈 YA NO NECESITÁS MARGIN-TOP */
+      margin: 40px auto 0 auto; /* Ajustá si querés mover la ruleta */
     }
 
     .rgb-ring {
@@ -193,27 +211,23 @@
     }
 
     @media (max-width: 480px) {
-      body {
-        padding-top: 38vh; /* 📱 Ajuste especial para celulares */
+      #logoPrincipal {
+        width: 200px;
       }
-
       h1 {
         font-size: 1.4rem;
       }
-
       .wheel-container {
-        width: 250px;
-      }
-
-      .rgb-ring {
-        width: 270px;
-        height: 270px;
+        width: 260px;
       }
     }
   </style>
 </head>
 
 <body>
+
+  <!-- LOGO NUEVO -->
+  <img id="logoPrincipal" src="https://iili.io/KyL5gBR.md.png" alt="Logo">
 
   <h1>🎉Girá la rueda y descubrí tu premio🎁</h1>
 
@@ -361,8 +375,8 @@
           rotarRuleta(currentAngle);
 
           const grados = currentAngle % 360;
-          const indice = Math.floor(grados / (360/premios.length));
-          const premio = premios[indice];
+          const index = Math.floor(grados / (360/premios.length));
+          const premio = premios[index];
 
           lastSpinTime = Date.now();
           localStorage.setItem("lastSpinTime", lastSpinTime);
