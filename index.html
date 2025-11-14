@@ -5,47 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruleta de Premios</title>
 
-  <!-- 🔥 OPEN GRAPH PARA VISTA PREVIA -->
-  <meta property="og:title" content="🎰 Ruleta de Premios | FACU CASINO™">
-  <meta property="og:description" content="Girá la rueda y descubrí tu premio.">
-  <meta property="og:image" content="https://iili.io/KyLa3sj.md.jpg">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://facucasino.onrender.com">
-
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-
-      /* Fondo nuevo + capa de opacidad suave */
-      background: url('https://iili.io/KyL5Hba.md.jpg') no-repeat center top;
-      background-size: cover;
-      position: relative;
+      background: #111;
       color: #fff;
       text-align: center;
       overflow-x: hidden;
     }
 
-    /* Capa de opacidad suave sobre el fondo */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.25); /* 🔥 Ajustá 0.25 para más/menos opacidad */
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    /* LOGO PRINCIPAL NUEVO */
     #logoPrincipal {
       width: 260px;
-      margin: 20px auto 10px auto;
+      margin: 20px auto 15px auto;
       display: block;
-      filter: drop-shadow(0 0 10px #ff00ff);
+      filter: drop-shadow(0 0 12px #ff00ff);
     }
 
     h1 {
@@ -53,15 +28,15 @@
       margin: 10px 0 20px 0;
       color: #ffcc00;
       text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-      padding: 0 10px;
     }
 
     .wheel-container {
       position: relative;
       width: 320px;
-      margin: 40px auto 0 auto; /* Ajustá si querés mover la ruleta */
+      margin: 30px auto 0 auto; /* 🔥 BAJADA 2 CM */
     }
 
+    /* ARO NEÓN MULTICOLOR GIRATORIO */
     .rgb-ring {
       position: absolute;
       top: -12px;
@@ -69,7 +44,7 @@
       width: 344px;
       height: 344px;
       border-radius: 50%;
-      background: conic-gradient(#ff0000,#ff9900,#ffff00,#00ff00,#00ffff,#0066ff,#9900ff,#ff00ff,#ff0000);
+      background: conic-gradient(#ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0066ff, #9900ff, #ff00ff, #ff0000);
       animation: rgbSpin 4s linear infinite;
       filter: blur(6px) brightness(1.8);
       z-index: -1;
@@ -86,6 +61,7 @@
       border-radius: 50%;
     }
 
+    /* Flecha invertida (punta hacia abajo) */
     .indicator {
       position: absolute;
       top: -35px;
@@ -121,9 +97,10 @@
 
     @keyframes neonPulse {
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-      to   { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
+    /* POPUP */
     #popup {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -146,7 +123,7 @@
 
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -210,26 +187,14 @@
       height: 22px;
     }
 
-    @media (max-width: 480px) {
-      #logoPrincipal {
-        width: 200px;
-      }
-      h1 {
-        font-size: 1.4rem;
-      }
-      .wheel-container {
-        width: 260px;
-      }
-    }
   </style>
 </head>
 
 <body>
 
-  <!-- LOGO NUEVO -->
-  <img id="logoPrincipal" src="https://iili.io/KyL5gBR.md.png" alt="Logo">
+  <img id="logoPrincipal" src="https://iili.io/KyhRSC7.md.jpg" alt="Logo">
 
-  <h1>🎉Girá la rueda y descubrí tu premio🎁</h1>
+  <h1>🎉 GIRA LA RUEDA y GANA!🎁</h1>
 
   <div class="wheel-container">
     <div class="rgb-ring"></div>
@@ -242,6 +207,7 @@
   <div id="popup">
     <div id="popupContent">
       <h2>¡GANASTE! 🎉</h2>
+
       <p id="premioTexto"></p>
       <p id="extraTexto"></p>
 
@@ -255,10 +221,11 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
         Contactar por WhatsApp
       </button>
+
     </div>
   </div>
 
-  <!-- CONFETTI -->
+  <!-- CONFETTI LIBRARY -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
@@ -285,15 +252,17 @@
     const closePopup = document.getElementById("closePopup");
     const btnWhatsapp = document.getElementById("btnWhatsapp");
 
+    /* SONIDOS */
     const sonidoGiro = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_15b88e99ff.mp3?filename=wheel-spin-1-110166.mp3");
     const sonidoDing = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5646dd24c8.mp3?filename=ding-126626.mp3");
 
-    const anglePerSegment = (2 * Math.PI) / premios.length;
+    const numSegments = premios.length;
+    const anglePerSegment = (2 * Math.PI) / numSegments;
     let currentAngle = 0;
 
     function drawWheel() {
       const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
-      for (let i = 0; i < premios.length; i++) {
+      for (let i = 0; i < numSegments; i++) {
         ctx.beginPath();
         ctx.moveTo(150,150);
         ctx.arc(150,150,150,i*anglePerSegment,(i+1)*anglePerSegment);
@@ -307,12 +276,13 @@
     function getRemainingTime() {
       if (!lastSpinTime) return 0;
       const diff = Date.now() - parseInt(lastSpinTime);
-      return 86400000 - diff;
+      return 24*60*60*1000 - diff;
     }
 
-    function showPopup(premio, countdown = null) {
+    function showPopup(premio, countdownText = null) {
 
-      if (!countdown) {
+      // CONFETI SOLO SI HAY PREMIO
+      if (!countdownText) {
         confetti({
           particleCount: 200,
           spread: 80,
@@ -320,62 +290,65 @@
         });
       }
 
-      premioTexto.innerText = countdown ? countdown : `FELICIDADES 🎉 Ganaste: ${premio}`;
-      extraTexto.innerText = countdown ? "" : "Recordá volver en 24 hs para volver a girar";
+      premioTexto.innerText = countdownText ? countdownText : `FELICIDADES 🎉 Ganaste: ${premio}`;
+      extraTexto.innerText = countdownText ? "" : "Recordá volver en 24 hs para volver a girar";
 
       popup.style.display = "flex";
-      solicitarBtn.style.display = countdown ? "none" : "inline-block";
+      solicitarBtn.style.display = countdownText ? "none" : "inline-block";
 
       btnWhatsapp.onclick = () => {
-        window.open("https://wa.me/541138219568","_blank");
+        const url = `https://wa.me/541138219568`;
+        window.open(url, "_blank");
       };
 
-      if (!countdown) {
+      if (!countdownText) {
         solicitarBtn.onclick = () => {
           const fecha = new Date().toLocaleString();
           const mensaje = `Hola, Facu. Gané en la rueda de premios: ${premio} (${fecha}) y quisiera solicitarlo. Gracias!`;
-          window.open(`https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`,"_blank");
+          const url = `https://wa.me/541138219568?text=${encodeURIComponent(mensaje)}`;
+          window.open(url, "_blank");
         };
       }
     }
 
     function spinWheel() {
-      let restante = getRemainingTime();
-      if (restante > 0) {
-        const h = Math.floor(restante / 3600000);
-        const m = Math.floor((restante % 3600000) / 60000);
-        showPopup(null, `⏳ Podrás volver a girar en ${h}h ${m}m`);
+      let remaining = getRemainingTime();
+      if (remaining > 0) {
+        const horas = Math.floor(remaining / (1000*60*60));
+        const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
+        showPopup(null, `⏳ Podrás volver a girar en ${horas}h ${mins}m`);
         return;
       }
 
       spinButton.disabled = true;
+
       sonidoGiro.currentTime = 0;
       sonidoGiro.play();
 
       const spinTime = 4000;
       const spinAngle = Math.random() * 360 + 1800;
-      const inicio = currentAngle;
-      const destino = inicio + spinAngle;
-      const inicioTiempo = performance.now();
+      const startAngle = currentAngle;
+      const targetAngle = startAngle + spinAngle;
+      const startTime = performance.now();
 
-      function animar(t) {
-        let transcurrido = t - inicioTiempo;
+      function animate(time) {
+        let elapsed = time - startTime;
 
-        if (transcurrido < spinTime) {
-          const progreso = transcurrido / spinTime;
-          currentAngle = inicio + (spinAngle * (1 - Math.pow(1 - progreso, 3)));
-          rotarRuleta(currentAngle);
-          requestAnimationFrame(animar);
+        if (elapsed < spinTime) {
+          const progress = elapsed / spinTime;
+          currentAngle = startAngle + (spinAngle * (1 - Math.pow(1 - progress, 3)));
+          drawRotatedWheel(currentAngle);
+          requestAnimationFrame(animate);
         } else {
           sonidoGiro.pause();
           sonidoGiro.currentTime = 0;
           sonidoDing.play();
 
-          currentAngle = destino;
-          rotarRuleta(currentAngle);
+          currentAngle = targetAngle;
+          drawRotatedWheel(currentAngle);
 
-          const grados = currentAngle % 360;
-          const index = Math.floor(grados / (360/premios.length));
+          const degrees = currentAngle % 360;
+          const index = Math.floor(degrees / (360/numSegments));
           const premio = premios[index];
 
           lastSpinTime = Date.now();
@@ -385,21 +358,21 @@
           spinButton.disabled = false;
         }
       }
-      requestAnimationFrame(animar);
+      requestAnimationFrame(animate);
     }
 
-    function rotarRuleta(angulo) {
+    function drawRotatedWheel(angle) {
       ctx.clearRect(0,0,canvas.width,canvas.height);
       ctx.save();
       ctx.translate(150,150);
-      ctx.rotate(angulo * Math.PI / 180);
+      ctx.rotate(angle * Math.PI / 180);
       ctx.translate(-150,-150);
       drawWheel();
       ctx.restore();
     }
 
     spinButton.addEventListener("click", spinWheel);
-    closePopup.addEventListener("click", () => popup.style.display = "none");
+    closePopup.addEventListener("click", () => { popup.style.display = "none"; });
   </script>
 
 </body>
