@@ -17,8 +17,11 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: url('https://iili.io/KyiWUhP.md.png') no-repeat center center fixed;
+
+      /* 🔥 CORREGIDO: antes estaba "fixed" y no te dejaba mover la ruleta */
+      background: url('https://iili.io/KyiWUhP.md.png') no-repeat center top;
       background-size: cover;
+
       color: #fff;
       text-align: center;
       overflow-x: hidden;
@@ -36,8 +39,8 @@
       position: relative;
       width: 320px;
 
-      /* 🔥 BAJADA PERFECTA DE LA RULETA */
-      margin: 3000px auto 0 auto;
+      /* 🔥 AHORA SÍ FUNCIONA — SUBE / BAJA LA RULETA */
+      margin: 300px auto 0 auto;
     }
 
     .rgb-ring {
@@ -47,7 +50,7 @@
       width: 344px;
       height: 344px;
       border-radius: 50%;
-      background: conic-gradient(#ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0066ff, #9900ff, #ff00ff, #ff0000);
+      background: conic-gradient(#ff0000,#ff9900,#ffff00,#00ff00,#00ffff,#0066ff,#9900ff,#ff00ff,#ff0000);
       animation: rgbSpin 4s linear infinite;
       filter: blur(6px) brightness(1.8);
       z-index: -1;
@@ -196,7 +199,7 @@
 
       .wheel-container {
         width: 250px;
-        margin-top: 150px;
+        margin-top: 200px; /* 🔥 ajustable */
       }
 
       .rgb-ring {
