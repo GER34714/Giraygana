@@ -28,6 +28,7 @@
       margin: 10px 0 20px 0;
       color: #ffcc00;
       text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+      padding: 0 10px;
     }
 
     .wheel-container {
@@ -97,7 +98,7 @@
 
     @keyframes neonPulse {
       from { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-      to { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+      to   { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
     }
 
     /* POPUP */
@@ -123,7 +124,7 @@
 
     @keyframes popupIn {
       from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      to   { transform: scale(1); opacity: 1; }
     }
 
     #popupContent h2 {
@@ -187,6 +188,57 @@
       height: 22px;
     }
 
+    /* 📱 RESPONSIVE MOBILE */
+    @media (max-width: 480px) {
+      
+      #logoPrincipal {
+        width: 200px;
+        margin-top: 15px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin: 5px 0 15px 0;
+      }
+
+      .wheel-container {
+        width: 250px;
+      }
+
+      .rgb-ring {
+        width: 270px;
+        height: 270px;
+        top: -10px;
+        left: -10px;
+      }
+
+      .indicator {
+        top: -30px;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-top: 20px solid yellow;
+      }
+
+      #spinButton {
+        font-size: 1.2rem;
+        padding: 12px 30px;
+      }
+
+      #popupContent h2 {
+        font-size: 1.6rem;
+      }
+
+      #popupContent p {
+        font-size: 1rem;
+      }
+
+      #solicitarBtn,
+      #closePopup,
+      #btnWhatsapp {
+        font-size: 1rem;
+        padding: 10px 18px;
+      }
+    }
   </style>
 </head>
 
@@ -261,7 +313,9 @@
     let currentAngle = 0;
 
     function drawWheel() {
-      const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
+      const colors = ["#ff0000","#ff9900","#ffff00",
+                      "#00ff00","#00ccff","#0066ff","#9900ff"];
+
       for (let i = 0; i < numSegments; i++) {
         ctx.beginPath();
         ctx.moveTo(150,150);
