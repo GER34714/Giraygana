@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎡 GIRA Y GANA | IJAÉ</title>
+
+    <!-- OG TAGS para vista previa WhatsApp -->
+    <meta property="og:title" content="🎡 GIRA Y GANA | IJAÉ">
+    <meta property="og:description" content="Girás GRATIS y te llevás un regalo de bienvenida (solo mayores de 18).">
+    <meta property="og:image" content="https://iili.io/fdxD6Hx.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://giraygana-ijae.onrender.com/">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000 url('https://iili.io/KyL5Hba.md.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-top: 10px;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+        }
+
+        #rueda {
+            width: 320px;
+            height: 320px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 6px solid #ffd700;
+            box-shadow: 0 0 25px gold;
+            animation: girando 5s ease-out paused;
+        }
+
+        @keyframes girando {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(2160deg); }
+        }
+
+        #btnGirar {
+            background: gold;
+            color: #000;
+            font-size: 20px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 0 15px gold;
+        }
+
+        #btnGirar:active {
+            transform: scale(0.96);
+        }
+
+        #resultado {
+            margin-top: 25px;
+            font-size: 22px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <img src="https://iili.io/fdxD6Hx.png" style="width: 260px; filter: drop-shadow(0 0 10px gold);">
+        <h1>🎡 GIRA Y GANA | IJAÉ 🎰</h1>
+
+        <img id="rueda" src="https://iili.io/fdxD6Hx.png" alt="rueda">
+
+        <button id="btnGirar">¡GIRAR AHORA!</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        const btn = document.getElementById("btnGirar");
+        const rueda = document.getElementById("rueda");
+        const resultado = document.getElementById("resultado");
+
+        btn.addEventListener("click", async () => {
+
+            btn.disabled = true;
+            resultado.innerHTML = "⏳ Procesando...";
+            
+            // Animación
+            rueda.style.animation = "none";
+            void rueda.offsetWidth;
+            rueda.style.animation = "girando 5s ease-out";
+
+            // Esperar un toque antes del fetch
+            setTimeout(async () => {
+                const usuarioId = Math.random().toString(36).substring(2, 12);
+
+                try {
+                    const res = await fetch("/girar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ usuarioId })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.yaGiro) {
+                        resultado.innerHTML = `⏳ ${data.mensaje}`;
+                    } else {
+                        resultado.innerHTML =
+                            `🎁 Premio: <b>${data.premio}</b><br><br>` +
+                            `📲 Contactá al cajero: <b>${data.cajero.nombre}</b><br>` +
+                            `👉 <a href="https://wa.me/549${data.cajero.numero}" style="color: gold;">${data.cajero.numero}</a>`;
+                    }
+
+                } catch (err) {
+                    resultado.innerHTML = "❌ Error de conexión.";
+                }
+
+                btn.disabled = false;
+
+            }, 800);
+
+        });
+    </script>
+
+</body>
+</html>
