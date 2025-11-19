@@ -1,10 +1,15 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// Servir carpeta PUBLIC para la landing
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Solo Facu
 const cajero = { nombre: "Facu", numero: "1138219568" };
@@ -12,6 +17,12 @@ const cajero = { nombre: "Facu", numero: "1138219568" };
 // Base de datos simple en memoria
 let usuarios = {};
 
+// Ruta principal -> tu index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Ruta para girar
 app.post('/girar', (req, res) => {
   const { usuarioId } = req.body;
   if (!usuarioId) return res.status(400).json({ error: "Falta usuarioId" });
@@ -56,6 +67,7 @@ app.post('/girar', (req, res) => {
   });
 });
 
+// Iniciar servidor
 app.listen(PORT, () => 
   console.log(`Servidor funcionando en http://localhost:${PORT}`)
 );
