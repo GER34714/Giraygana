@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Solo Facu
-const cajero = { nombre: "Facu", numero: "1138219568" };
+const cajero = { nombre: "Facu", numero: "1125127839" };
 
 // Base de datos simple en memoria
 let usuarios = {};
