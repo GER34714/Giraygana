@@ -1,3 +1,7 @@
+Tal cual: si querés que no se repita seguido (y que haya variedad real), lo más efectivo es usar una “bolsa” (shuffle bag): se arma una lista con premios únicos, se mezcla, y se van sacando uno por uno. Recién cuando se agota, se vuelve a mezclar. Así evitás que “salga siempre lo mismo” por rachas de azar.
+
+Acá tenés tu HTML completo con ese cambio (persiste en localStorage, así que funciona entre días también):
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -286,9 +290,9 @@
     const premios = [
       "10% extra (en mi primera carga)",
       "15% extra (en mi primera carga)",
-      "15% extra (en mi primera carga)",
-      "20% extra (en mi segunda carga)",
-      "10% extra (en mi primera carga)",
+      "400 fichas (en mi primera carga)",
+      "300 fichas (sin carga, no retirables)",
+      "500 fichas (en mi primera carga)",
       "10% extra (en mi primera carga)",
       "300 fichas (sin carga, no retirables)"
     ];
@@ -314,12 +318,66 @@
     const segmentDeg = 360 / numSegments;
     let currentAngle = 0;
 
-    // === NUEVO: tabla para “premios parejos” (misma chance por premio único) ===
-    const premiosUnicos = Array.from(new Set(premios));
+    // === Mapa de premios -> índices de segmentos (por si un texto se repite en la rueda) ===
     const premioToIndexes = premios.reduce((acc, p, idx) => {
       (acc[p] ||= []).push(idx);
       return acc;
     }, {});
+
+    // === Bolsa (shuffle-bag) de premios ÚNICOS para evitar repeticiones seguidas ===
+    const BAG_KEY = "premiosBagState_v1";
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function loadBagState() {
+      try {
+        const raw = localStorage.getItem(BAG_KEY);
+        if (!raw) return { bag: [], lastPrize: null };
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.bag)) return { bag: [], lastPrize: null };
+        return { bag: parsed.bag, lastPrize: parsed.lastPrize ?? null };
+      } catch {
+        return { bag: [], lastPrize: null };
+      }
+    }
+
+    function saveBagState(state) {
+      localStorage.setItem(BAG_KEY, JSON.stringify(state));
+    }
+
+    function refillBagIfNeeded(state) {
+      if (state.bag.length > 0) return;
+      const uniques = Array.from(new Set(premios)); // premios únicos
+      state.bag = shuffleArray([...uniques]);
+    }
+
+    function pickNonRepeatingPrize() {
+      const state = loadBagState();
+      refillBagIfNeeded(state);
+
+      let prize = state.bag.pop();
+
+      // Anti “repetición inmediata” por si justo se dio al recargar la bolsa
+      if (prize === state.lastPrize) {
+        refillBagIfNeeded(state);
+        if (state.bag.length > 0) {
+          // Tomo otro y vuelvo a meter el repetido
+          const alt = state.bag.pop();
+          state.bag.unshift(prize);
+          prize = alt;
+        }
+      }
+
+      state.lastPrize = prize;
+      saveBagState(state);
+      return prize;
+    }
 
     function drawWheel() {
       const colors = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ccff","#0066ff","#9900ff"];
@@ -371,17 +429,6 @@
       }
     }
 
-    function pickFairPrizeIndex() {
-      // 1) Elegimos un premio ÚNICO al azar (todos con la misma probabilidad)
-      const premioElegido = premiosUnicos[Math.floor(Math.random() * premiosUnicos.length)];
-
-      // 2) Si ese premio estaba repetido, elegimos al azar uno de sus segmentos
-      const indexes = premioToIndexes[premioElegido];
-      const indexElegido = indexes[Math.floor(Math.random() * indexes.length)];
-
-      return { premioElegido, indexElegido };
-    }
-
     function spinWheel() {
       let remaining = getRemainingTime();
       if (remaining > 0) {
@@ -398,19 +445,21 @@
       const spinTime = 4000;
       const startAngle = currentAngle;
 
-      // === NUEVO: definimos ANTES cuál premio sale (parejo), y hacemos que la animación caiga ahí ===
-      const { premioElegido, indexElegido } = pickFairPrizeIndex();
+      // === NUEVO: premio con variedad (shuffle-bag) ===
+      const premioElegido = pickNonRepeatingPrize();
 
-      // Queremos que (currentAngle % 360) caiga dentro del segmento indexElegido.
-      // Usamos el centro del segmento + un poco de random para que no caiga siempre igual.
+      // Si el texto aparece en varios segmentos, elegimos uno de esos segmentos para “caer ahí”
+      const indexes = premioToIndexes[premioElegido] || [0];
+      const indexElegido = indexes[Math.floor(Math.random() * indexes.length)];
+
       const centerDeg = (indexElegido * segmentDeg) + (segmentDeg / 2);
-      const jitter = (Math.random() - 0.5) * (segmentDeg * 0.6); // 60% del ancho del segmento
+      const jitter = (Math.random() - 0.5) * (segmentDeg * 0.6);
       const desiredDeg = centerDeg + jitter;
 
       const startMod = ((startAngle % 360) + 360) % 360;
       const delta = (desiredDeg - startMod + 360) % 360;
 
-      const extraSpins = 5 + Math.floor(Math.random() * 3); // 5 a 7 vueltas completas
+      const extraSpins = 5 + Math.floor(Math.random() * 3);
       const spinAngle = (extraSpins * 360) + delta;
 
       const targetAngle = startAngle + spinAngle;
